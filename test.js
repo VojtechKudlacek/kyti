@@ -10,29 +10,29 @@ const formatter = new Intl.DateTimeFormat('cs-CZ', {
   hour12: false,
 });
 
+let minTemperature = null;
+let maxTemperature = null;
+let minHumidity = null;
+let maxHumidity = null;
+let errorCount = 0;
+
 function read() {
-  let minTemp = null;
-  let maxTemp = null;
-  let minHum = null;
-  let maxHum = null;
-  let errorCount = 0;
 
   sensor.read(22, 4, function (err, temperature, humidity) {
-		const temp = JSON.parse(JSON.stringify(temperature));
-		const hum = JSON.parse(JSON.stringify(humidity));
     console.clear();
     console.log(formatter.format(new Date()));
     if (!err) {
-      if (minTemp === null) { minTemp = temp; }
-      if (maxTemp === null) { maxTemp = temp; }
-      if (maxHum === null) { maxHum = hum; }
-      if (minHum === null) { minHum = hum; }
-      if (hum > maxHum) { maxHum = hum; }
-      if (hum < minHum) { minHum = hum; }
-      if (temp > maxTemp) { maxTemp = temp; }
-      if (temp < minTemp) { minTemp = temp; }
-      console.log(`Temp: ${temp.toFixed(1)} C (min ${minTemp.toFixed(1)} C; max ${maxTemp.toFixed(1)} C)`);
-      console.log(`Humidity: ${hum.toFixed(1)}% (min ${minHum.toFixed(1)}%; max ${maxHum.toFixed(1)}%)`);
+      if (minTemperature === null) { minTemperature = temperature; }
+      if (maxTemperature === null) { maxTemperature = temperature; }
+      if (maxHumidity === null) { maxHumidity = humidity; }
+      if (minHumidity === null) { minHumidity = humidity; }
+      if (humidity > maxHumidity) { maxHumidity = humidity; }
+      if (humidity < minHumidity) { minHumidity = humidity; }
+      if (temperature > maxTemperature) { maxTemperature = temperature; }
+      if (temperature < minTemperature) { minTemperature = temperature; }
+
+      console.log(`Temp: ${temperature.toFixed(1)} C (min ${minTemperature.toFixed(1)} C; max ${maxTemperature.toFixed(1)} C)`);
+      console.log(`Humidity: ${humidity.toFixed(1)}% (min ${minHumidity.toFixed(1)}%; max ${maxHumidity.toFixed(1)}%)`);
       console.log(`Error count: ${errorCount}`);
     } else {
       errorCount++;
