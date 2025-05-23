@@ -1,0 +1,33 @@
+{
+	"name": "kyti",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/app.js",
+	"type": "commonjs",
+	"scripts": {
+		"format": "biome format --write .",
+		"lint": "biome lint .",
+		"check": "biome check --apply ",
+		"build": "esbuild src/app.ts --bundle --platform=node --target=node18 --outfile=dist/app.js",
+		"start": "node dist/app.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.10.0",
+	"dependencies": {
+		"better-sqlite3": "^11.10.0",
+		"dotenv": "^16.5.0",
+		"node-dht-sensor": "^0.4.5",
+		"spi-device": "^3.1.2",
+		"tuyapi": "^7.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/better-sqlite3": "^7.6.13",
+		"@types/node": "^20.11.24",
+		"@types/node-dht-sensor": "^0.4.2",
+		"esbuild": "^0.25.4",
+		"typescript": "^5.4.2"
+	}
+}
