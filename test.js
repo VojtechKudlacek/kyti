@@ -17,10 +17,11 @@ let maxHumidity = null;
 let errorCount = 0;
 
 function read() {
-
   sensor.read(22, 4, function (err, temperature, humidity) {
-    console.clear();
-    console.log(formatter.format(new Date()));
+		console.clear();
+    console.log(`Now: ${formatter.format(new Date())}`);
+		console.log(`Uptime: ${process.uptime().toFixed(1)}s`);
+
     if (!err) {
       if (minTemperature === null) { minTemperature = temperature; }
       if (maxTemperature === null) { maxTemperature = temperature; }
