@@ -1,3 +1,4 @@
+import { Outlet, SocketSlot } from './classes/Outlet';
 import { Scheduler } from './classes/Scheduler';
 import { config } from './config';
 import { insertRecord } from './db/actions';
@@ -5,10 +6,10 @@ import { databaseClient } from './db/client';
 import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
 import { getDhtData } from './hw/dht';
-import { SocketSlot, isSocketEnabled, retrieveOutletEnabledState, setSocketState } from './hw/outlet';
 import { stringifyError } from './utils';
 
 const scheduler = new Scheduler();
+const outlet = new Outlet();
 
 let isTerminating = false;
 function terminate(reason: string, exitCode = 0) {
@@ -30,7 +31,7 @@ async function controlClimate() {
 		return;
 	}
 
-	const ventilatorIsOn = isSocketEnabled(SocketSlot.Ventilator);
+	const ventilatorIsOn = outlet.isEnabled(SocketSlot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
 	// Turn ventilator on if temperature is too high
 	if (dhtData.temperature > config.tent.temperatureMax) {
@@ -45,7 +46,7 @@ async function controlClimate() {
 		newVentilatorState = true;
 	}
 
-	const humidifierIsOn = isSocketEnabled(SocketSlot.Humidifier);
+	const humidifierIsOn = outlet.isEnabled(SocketSlot.Humidifier);
 	let newHumidifierState = humidifierIsOn;
 	// Turn humidifier on if humidity is too low
 	if (dhtData.humidity < config.tent.humidityMin) {
@@ -56,8 +57,12 @@ async function controlClimate() {
 		newHumidifierState = false;
 	}
 
-	await setSocketState(SocketSlot.Ventilator, newVentilatorState);
-	await setSocketState(SocketSlot.Humidifier, newHumidifierState);
+	if (newVentilatorState !== ventilatorIsOn) {
+		await outlet.setState(SocketSlot.Ventilator, newVentilatorState);
+	}
+	if (newHumidifierState !== humidifierIsOn) {
+		await outlet.setState(SocketSlot.Humidifier, newHumidifierState);
+	}
 }
 
 async function collectRecords() {
@@ -65,21 +70,24 @@ async function collectRecords() {
 	insertRecord({
 		temperature: dhtData?.temperature ?? null,
 		humidity: dhtData?.humidity ?? null,
-		light: isSocketEnabled(SocketSlot.Light),
-		fan: isSocketEnabled(SocketSlot.Fan),
-		humidifier: isSocketEnabled(SocketSlot.Humidifier),
-		ventilator: isSocketEnabled(SocketSlot.Ventilator),
+		light: outlet.isEnabled(SocketSlot.Light),
+		fan: outlet.isEnabled(SocketSlot.Fan),
+		humidifier: outlet.isEnabled(SocketSlot.Humidifier),
+		ventilator: outlet.isEnabled(SocketSlot.Ventilator),
 	});
 }
 
 async function setup() {
 	try {
+		console.clear();
 		console.log('Setting up...');
+
 		setupDatabase();
-		await retrieveOutletEnabledState();
+		await outlet.initialize();
 		scheduler.addTask('Climate Controller', 1, controlClimate);
 		scheduler.addTask('Records Collector', 1, collectRecords);
 		scheduler.start();
+
 		console.log('Setup complete');
 	} catch (error) {
 		terminate(`Setup error - ${stringifyError(error)}`, 1);
