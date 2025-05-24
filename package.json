@@ -8,7 +8,7 @@
 		"format": "biome format --write .",
 		"lint": "biome lint .",
 		"check": "biome check --apply ",
-		"build": "esbuild src/app.ts --bundle --platform=node --target=node18 --outfile=dist/app.js",
+		"build": "node build.js",
 		"start": "node dist/app.js"
 	},
 	"keywords": [],
