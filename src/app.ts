@@ -1,36 +1,39 @@
-import type { SpiDevice } from 'spi-device';
-import { config, outlets } from './config';
-import { type DatabaseClient, getDatabaseClient } from './db/client';
+import './config';
+import { databaseClient } from './db/client';
+import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
-import { Outlet } from './hw/Outlet';
-import { getSpiDevice } from './spi';
+import { SocketSlot, isSocketEnabled, retrieveOutletEnabledState, setSocketState } from './hw/outlet';
+import { stringifyError } from './utils';
 
-const frequency = 1000;
+let runtimeInterval: NodeJS.Timeout;
 
-async function run() {
-	let db: DatabaseClient | null = null;
-	let _spi: SpiDevice | null = null;
+function terminate(reason: string, exitCode = 0) {
+	log(`Terminating process: ${reason}`, exitCode === 0 ? LogType.Info : LogType.Error);
+	databaseClient.close();
+	if (runtimeInterval) {
+		clearInterval(runtimeInterval);
+	}
+	process.exit(exitCode);
+}
 
+function run() {
 	try {
-		db = getDatabaseClient();
-		setupDatabase(db);
-		_spi = await getSpiDevice();
-
-		const ventilatorOutlet = new Outlet({
-			id: config.deviceId,
-			key: config.deviceKey,
-			outlet: outlets.ventilator,
-		});
-
-		console.log(await ventilatorOutlet.turnOn());
-		await new Promise((resolve) => setTimeout(resolve, 5000));
-		console.log(await ventilatorOutlet.turnOff());
+		console.log('Running...');
+		console.log(isSocketEnabled(SocketSlot.Light));
+		setSocketState(SocketSlot.Light, true);
 	} catch (error) {
-		console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
-		process.exit(1);
-	} finally {
-		db?.close();
+		terminate(`Runtime error - ${stringifyError(error)}`, 1);
 	}
 }
 
-run();
+async function setup() {
+	try {
+		setupDatabase();
+		await retrieveOutletEnabledState();
+		runtimeInterval = setInterval(run, 5 * 1000); // 5 seconds
+	} catch (error) {
+		terminate(`Setup error - ${stringifyError(error)}`, 1);
+	}
+}
+
+setup();

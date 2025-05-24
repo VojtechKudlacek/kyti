@@ -7,6 +7,7 @@ interface SensorConfig {
 	spiDevice: SpiDevice;
 }
 
+// TODO: Implement this class once the sensor is connected
 export class SoilMoistureSensor {
 	private _channel: number;
 	private _spiDevice: SpiDevice;

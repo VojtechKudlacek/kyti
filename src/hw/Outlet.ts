@@ -1,84 +1,69 @@
 import TuyAPI, { type DPSObject } from 'tuyapi';
+import { config } from '../config';
+import { LogType, log } from '../db/log';
 import { stringifyError } from '../utils';
 
-interface OutletConfig {
-	id: string;
-	key: string;
-	outlet: number;
+export const SocketSlot = {
+	Light: config.outlet.slots.light,
+	Ventilator: config.outlet.slots.ventilator,
+	Fan: config.outlet.slots.fan,
+	Humidifier: config.outlet.slots.humidifier,
+} as const;
+
+const outletState = new Map<number, boolean>();
+const outletApi = new TuyAPI({
+	id: config.outlet.id,
+	key: config.outlet.key,
+	issueGetOnConnect: false,
+});
+
+let outletFound = false;
+async function executeOutletAction<T>(action: () => Promise<T>) {
+	try {
+		if (!outletFound) {
+			await outletApi.find();
+			outletFound = true;
+		}
+		await outletApi.connect();
+		return await action();
+	} finally {
+		outletApi.disconnect();
+	}
 }
 
-export class Outlet {
-	private id: string;
-	private key: string;
-
-	private device: TuyAPI;
-	private found: boolean;
-	private enabled: boolean | null;
-
-	constructor(config: OutletConfig) {
-		this.id = config.id;
-		this.key = config.key;
-
-		this.device = new TuyAPI({
-			id: this.id,
-			key: this.key,
-			issueGetOnConnect: false,
-		});
-		this.found = false;
-		this.enabled = null;
-	}
-
-	private async connect(): Promise<void> {
-		if (!this.found) {
-			await this.device.find();
-			this.found = true;
-		}
-		await this.device.connect();
-	}
-
-	private disconnect(): void {
-		this.device.disconnect();
-	}
-
-	private async switch(on: boolean): Promise<boolean> {
+export function retrieveOutletEnabledState(): Promise<void> {
+	return executeOutletAction(async function () {
 		try {
-			await this.connect();
-			const result = await this.device.set({ dps: this.outlet, set: on });
-			return result.dps[this.outlet] === on;
+			const schema = (await outletApi.get({ schema: true })) as DPSObject;
+			for (const slot of Object.values<number>(config.outlet.slots)) {
+				const slotValue = schema.dps[slot];
+				outletState.set(slot, Boolean(slotValue));
+			}
 		} catch (error) {
-			console.error('Outlet switch error: ', stringifyError(error));
-			return false;
-		} finally {
-			this.disconnect();
+			log(`Outlet retrieve enabled state error: ${stringifyError(error)}`, LogType.Error);
+			throw error;
 		}
-	}
+	});
+}
 
-	public async turnOn(): Promise<boolean> {
-		const ack = await this.switch(true);
-		return ack;
+export function isSocketEnabled(slot: number): boolean {
+	if (!outletState.has(slot)) {
+		log('Call retrieveOutletEnabledState() to get the current enabled state', LogType.Warning);
+		return false;
 	}
+	return Boolean(outletState.get(slot));
+}
 
-	public async turnOff(): Promise<boolean> {
-		const ack = await this.switch(false);
-		return ack;
-	}
-
-	public async retrieveEnabledState(): Promise<void> {
+export function setSocketState(slot: number, newState: boolean): Promise<boolean> {
+	return executeOutletAction(async function () {
 		try {
-			await this.connect();
-			const result = (await this.device.get({ schema: true })) as DPSObject;
-			this.enabled = Boolean(result.dps[this.outlet]);
+			const response = await outletApi.set({ dps: slot, set: newState });
+			const result = response.dps[slot] === newState;
+			outletState.set(slot, result);
+			return result;
 		} catch (error) {
-			console.error('Outlet retrieve enabled state error: ', stringifyError(error));
-		} finally {
-			this.disconnect();
+			log(`Outlet switch error: ${stringifyError(error)}`, LogType.Error);
+			throw error;
 		}
-	}
-
-	public get isEnabled(): boolean {
-		if (this.enabled === null) {
-			console.warn('Call retrieveEnabledState() to get the current enabled state');
-		}
-		return this.enabled ?? false;
-	}
+	});
 }
