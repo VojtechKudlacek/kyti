@@ -19,4 +19,12 @@ export const config = {
 		name: String(process.env.DB_NAME),
 		loggingEnabled: Boolean(Number(process.env.DB_LOGGING_ENABLED)),
 	},
+	tent: {
+		temperatureMin: Number(process.env.TENT_TEMPERATURE_MIN),
+		temperatureMax: Number(process.env.TENT_TEMPERATURE_MAX),
+		humidityMin: Number(process.env.TENT_HUMIDITY_MIN),
+		humidityMax: Number(process.env.TENT_HUMIDITY_MAX),
+		temperatureRange: Number(process.env.TENT_TEMPERATURE_RANGE),
+		humidityRange: Number(process.env.TENT_HUMIDITY_RANGE),
+	},
 };

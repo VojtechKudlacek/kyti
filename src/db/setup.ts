@@ -6,8 +6,8 @@ export function setupDatabase(): void {
     CREATE TABLE IF NOT EXISTS records (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       timestamp INTEGER NOT NULL,
-      temperature REAL NOT NULL,
-      humidity REAL NOT NULL,
+      temperature REAL,
+      humidity REAL,
       light BOOLEAN NOT NULL,
       fan BOOLEAN NOT NULL,
       humidifier BOOLEAN NOT NULL,

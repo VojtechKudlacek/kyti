@@ -9,14 +9,15 @@
 		"lint": "biome lint .",
 		"check": "biome check --apply ",
 		"build": "node build.js",
-		"start": "node dist/app.js"
+		"start": "pnpm build && node dist/app.js"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"packageManager": "pnpm@10.10.0",
+	"packageManager": "pnpm@10.11.0",
 	"dependencies": {
 		"better-sqlite3": "^11.10.0",
+		"date-fns": "^4.1.0",
 		"dotenv": "^16.5.0",
 		"node-dht-sensor": "^0.4.5",
 		"spi-device": "^3.1.2",

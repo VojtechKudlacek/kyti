@@ -3,8 +3,8 @@ import { LogType, log } from '../db/log';
 import { stringifyError } from '../utils';
 
 interface Dht22Data {
-	humidity: number | null;
-	temperature: number | null;
+	humidity: number;
+	temperature: number;
 }
 
 export async function getDhtData(): Promise<Dht22Data | null> {
