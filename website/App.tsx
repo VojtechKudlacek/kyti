@@ -5,6 +5,7 @@ import {
 	Chart as ChartJS,
 	Filler,
 	Legend,
+	LineController,
 	LineElement,
 	LinearScale,
 	PointElement,
@@ -20,7 +21,18 @@ import { logsAtom } from 'store/logs';
 import { recordsAtom } from 'store/records';
 
 // Register ChartJS components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+	LineController,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend,
+	Filler,
+);
 
 export function App() {
 	const [records, setRecords] = useAtom(recordsAtom);
