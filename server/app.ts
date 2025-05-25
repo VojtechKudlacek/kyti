@@ -49,8 +49,11 @@ async function controlClimate() {
 	if (dht.temperature < config.tent.temperatureMax - config.tent.temperatureRange) {
 		newVentilatorState = false;
 	}
-	// Turn ventilator on if humidity is too high
-	if (dht.humidity > config.tent.humidityMax) {
+	// Turn ventilator on if humidity is too high, but only if temperature is within range
+	if (
+		dht.humidity > config.tent.humidityMax &&
+		dht.temperature > config.tent.temperatureMin + config.tent.temperatureRange
+	) {
 		newVentilatorState = true;
 	}
 
