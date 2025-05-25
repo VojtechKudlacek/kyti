@@ -1,9 +1,16 @@
 import { databaseClient } from './client';
 import type { DatabaseRecord, WritableDatabseRecord } from './types';
 
-export function getRecords(): Array<DatabaseRecord> {
+export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
+	const where: Array<string> = [];
+	if (from) {
+		where.push(`timestamp >= ${from}`);
+	}
+	if (to) {
+		where.push(`timestamp <= ${to}`);
+	}
 	return databaseClient
-		.prepare('SELECT * FROM records ORDER BY timestamp DESC LIMIT 60')
+		.prepare(`SELECT * FROM records ${where.length > 0 ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY timestamp ASC`)
 		.all() as Array<DatabaseRecord>;
 }
 
