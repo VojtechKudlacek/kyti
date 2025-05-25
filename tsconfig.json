@@ -4,7 +4,7 @@
 		"module": "ES2020",
 		"moduleResolution": "node",
 		"outDir": "./dist",
-		"rootDir": "./src",
+		"rootDir": "server",
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
@@ -17,7 +17,7 @@
 		"noFallthroughCasesInSwitch": true
 	},
 	"include": [
-		"src/**/*"
+		"server/**/*"
 	],
 	"exclude": [
 		"node_modules"

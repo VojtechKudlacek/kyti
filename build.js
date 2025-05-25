@@ -11,7 +11,7 @@ function formatSize(bytes) {
 
 console.time('build');
 esbuild.build({
-  entryPoints: ['src/app.ts'],
+  entryPoints: ['server/app.ts'],
   bundle: true,
   outfile: 'dist/app.js',
   platform: 'node',
