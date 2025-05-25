@@ -10,8 +10,8 @@ export class DhtSensor {
 	public async read(): Promise<void> {
 		try {
 			const { humidity, temperature } = await sensorPromises.read(config.dht.version as SensorType, config.dht.pin);
-			this._temperature = temperature;
-			this._humidity = humidity;
+			this._temperature = Number.parseFloat(temperature.toFixed(1));
+			this._humidity = Number.parseFloat(humidity.toFixed(1));
 		} catch (error) {
 			this._temperature = null;
 			this._humidity = null;

@@ -1,6 +1,8 @@
 import path from 'node:path';
+import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
+import { apiRoutes } from './api';
 import { DhtSensor } from './classes/DhtSensor';
 import { Outlet, SocketSlot } from './classes/Outlet';
 import { Scheduler } from './classes/Scheduler';
@@ -12,16 +14,6 @@ import { setupDatabase } from './db/setup';
 import { stringifyError } from './utils';
 
 const fastify = Fastify();
-
-fastify.register(fastifyStatic, {
-	root: path.join(process.cwd(), 'dist'),
-	prefix: '/',
-});
-
-// Serve index.html for all routes that don't match static files
-fastify.setNotFoundHandler((_request, reply) => {
-	reply.type('text/html').sendFile('index.html');
-});
 
 const scheduler = new Scheduler();
 const outlet = new Outlet();
@@ -44,7 +36,6 @@ function terminate(reason: string, exitCode = 0) {
 async function controlClimate() {
 	await dht.read();
 	if (dht.temperature === null || dht.humidity === null) {
-		log('No DHT data available', LogType.Error);
 		return;
 	}
 
@@ -110,15 +101,20 @@ async function setup() {
 		scheduler.addTask('Records Collector', 1, collectRecords);
 		scheduler.start();
 
-		await new Promise<void>((resolve, reject) => {
-			fastify.listen({ port: 3000 }, (error, address) => {
-				if (error) {
-					return reject(error);
-				}
-				console.log(`Server running on ${address}`);
-				resolve();
-			});
+		fastify.register(cors);
+		fastify.register(apiRoutes, { prefix: '/api' });
+		fastify.register(fastifyStatic, {
+			root: path.join(process.cwd(), 'dist'),
+			prefix: '/',
 		});
+		fastify.setNotFoundHandler((request, reply) => {
+			if (request.raw.url?.startsWith('/api')) {
+				reply.status(404).send({ error: 'Not found' });
+				return;
+			}
+			reply.type('text/html').sendFile('index.html');
+		});
+		await fastify.listen({ port: 3000 });
 
 		console.log('Setup complete');
 	} catch (error) {

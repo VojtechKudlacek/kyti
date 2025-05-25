@@ -1,4 +1,4 @@
-export interface Record {
+export interface DatabaseRecord {
 	id: number;
 	timestamp: number;
 	temperature: number | null;
@@ -9,4 +9,4 @@ export interface Record {
 	ventilator: boolean;
 }
 
-export type WritableRecord = Omit<Record, 'id'>;
+export type WritableDatabseRecord = Omit<DatabaseRecord, 'id'>;

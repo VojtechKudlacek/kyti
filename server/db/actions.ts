@@ -1,7 +1,13 @@
 import { databaseClient } from './client';
-import type { WritableRecord } from './types';
+import type { DatabaseRecord, WritableDatabseRecord } from './types';
 
-export function insertRecord(record: WritableRecord) {
+export function getRecords(): Array<DatabaseRecord> {
+	return databaseClient
+		.prepare('SELECT * FROM records ORDER BY timestamp DESC LIMIT 60')
+		.all() as Array<DatabaseRecord>;
+}
+
+export function insertRecord(record: WritableDatabseRecord) {
 	databaseClient
 		.prepare(
 			'INSERT INTO records (timestamp, temperature, humidity, light, fan, humidifier, ventilator) VALUES (?, ?, ?, ?, ?, ?, ?)',
