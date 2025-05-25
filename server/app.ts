@@ -36,6 +36,7 @@ function terminate(reason: string, exitCode = 0) {
 	log(`Terminating process: ${reason}`, exitCode === 0 ? LogType.Info : LogType.Error);
 	scheduler.stop();
 	databaseClient.close();
+	fastify.close();
 	// Give a small grace period for cleanup operations
 	setTimeout(() => process.exit(exitCode), 100);
 }
