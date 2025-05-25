@@ -13,7 +13,7 @@ console.time('build');
 esbuild.build({
   entryPoints: ['server/app.ts'],
   bundle: true,
-  outfile: 'dist/app.js',
+  outfile: 'dist_server/app.js',
   platform: 'node',
   target: 'node22',
   format: 'cjs',

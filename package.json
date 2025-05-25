@@ -2,24 +2,31 @@
 	"name": "kyti",
 	"version": "1.0.0",
 	"description": "",
-	"main": "dist/app.js",
-	"type": "commonjs",
+	"type": "module",
 	"scripts": {
-		"format": "biome format --write .",
-		"lint": "biome lint .",
-		"check": "biome check --apply ",
-		"build": "node build.js",
-		"start": "pnpm build && node dist/app.js"
+		"server:format": "biome format --write server",
+		"server:lint": "biome lint server",
+		"server:check": "biome check --write server",
+		"server:build": "node build.js",
+		"server:start": "pnpm server:build && node dist_server/app.js",
+		"website:dev": "vite",
+		"website:build": "tsc -b && vite build",
+		"website:lint": "biome lint website",
+		"website:check": "biome check --write website",
+		"website:preview": "vite preview"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"author": "Vojtech Kudlacek",
+	"license": "MIT",
 	"packageManager": "pnpm@10.11.0",
 	"dependencies": {
+		"@fastify/static": "^8.2.0",
 		"better-sqlite3": "^11.10.0",
 		"date-fns": "^4.1.0",
 		"dotenv": "^16.5.0",
+		"fastify": "^5.3.3",
 		"node-dht-sensor": "^0.4.5",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
 		"spi-device": "^3.1.2",
 		"tuyapi": "^7.0.0"
 	},
@@ -28,7 +35,12 @@
 		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "^20.11.24",
 		"@types/node-dht-sensor": "^0.4.2",
+		"@types/react": "^19.1.5",
+		"@types/react-dom": "^19.1.5",
+		"@vitejs/plugin-react-swc": "^3.10.0",
 		"esbuild": "^0.25.4",
-		"typescript": "^5.4.2"
+		"globals": "^16.2.0",
+		"typescript": "^5.4.2",
+		"vite": "^6.3.5"
 	}
 }

@@ -3,7 +3,7 @@
 		"target": "ES2020",
 		"module": "ES2020",
 		"moduleResolution": "node",
-		"outDir": "./dist",
+		"outDir": "./dist_server",
 		"rootDir": "server",
 		"strict": true,
 		"esModuleInterop": true,
@@ -17,7 +17,7 @@
 		"noFallthroughCasesInSwitch": true
 	},
 	"include": [
-		"server/**/*"
+		"server"
 	],
 	"exclude": [
 		"node_modules"
