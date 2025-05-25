@@ -20,6 +20,7 @@ esbuild.build({
   sourcemap: false,
   minify: false,
 	metafile: true,
+	tsconfig: 'tsconfig.server.json',
   external: [
     'better-sqlite3',
     'node-dht-sensor',
