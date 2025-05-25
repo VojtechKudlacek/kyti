@@ -8,7 +8,7 @@
 		"server:lint": "biome lint server",
 		"server:check": "biome check --write server",
 		"server:build": "node build.cjs",
-		"server:start": "pnpm server:build && node dist_server/app.cjs",
+		"server:start": "pnpm server:build && node server.cjs",
 		"website:dev": "vite",
 		"website:build": "tsc -b && vite build",
 		"website:lint": "biome lint website",

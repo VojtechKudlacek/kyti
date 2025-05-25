@@ -20,11 +20,11 @@ export const config = {
 		loggingEnabled: Boolean(Number(process.env.DB_LOGGING_ENABLED)),
 	},
 	tent: {
-		temperatureMin: Number(process.env.TENT_TEMPERATURE_MIN),
-		temperatureMax: Number(process.env.TENT_TEMPERATURE_MAX),
-		humidityMin: Number(process.env.TENT_HUMIDITY_MIN),
-		humidityMax: Number(process.env.TENT_HUMIDITY_MAX),
-		temperatureRange: Number(process.env.TENT_TEMPERATURE_RANGE),
-		humidityRange: Number(process.env.TENT_HUMIDITY_RANGE),
+		temperatureMin: Number(process.env.TEMPERATURE_MIN),
+		temperatureMax: Number(process.env.TEMPERATURE_MAX),
+		humidityMin: Number(process.env.HUMIDITY_MIN),
+		humidityMax: Number(process.env.HUMIDITY_MAX),
+		temperatureRange: Number(process.env.TEMPERATURE_RANGE),
+		humidityRange: Number(process.env.HUMIDITY_RANGE),
 	},
 };

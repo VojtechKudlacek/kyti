@@ -12,7 +12,7 @@ yarn-error.log*
 .env.*.local
 
 # Build output
-dist_server/
+server.cjs
 dist/
 build/
 
