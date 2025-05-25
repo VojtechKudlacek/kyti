@@ -38,8 +38,7 @@ export class Outlet {
 				throw new Error('Failed to connect to outlet');
 			}
 			const response = await this._api.set({ dps: socket, set: newState });
-			console.log(response.dps);
-			const result = response.dps[socket] === newState;
+			const result = Boolean(response.dps[socket]);
 			this._state.set(socket, result);
 			return result;
 		} catch (error) {
