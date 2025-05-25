@@ -281,6 +281,18 @@
 	"overrides": [
 		{
 			"include": [
+				"server/**/*.ts"
+			],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noNodejsModules": "off"
+					}
+				}
+			}
+		},
+		{
+			"include": [
 				"*.{yml,yaml}"
 			],
 			"formatter": {

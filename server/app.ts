@@ -1,3 +1,6 @@
+import path from 'node:path';
+import fastifyStatic from '@fastify/static';
+import Fastify from 'fastify';
 import { DhtSensor } from './classes/DhtSensor';
 import { Outlet, SocketSlot } from './classes/Outlet';
 import { Scheduler } from './classes/Scheduler';
@@ -7,6 +10,18 @@ import { databaseClient } from './db/client';
 import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
 import { stringifyError } from './utils';
+
+const fastify = Fastify();
+
+fastify.register(fastifyStatic, {
+	root: path.join(process.cwd(), 'dist'),
+	prefix: '/',
+});
+
+// Serve index.html for all routes that don't match static files
+fastify.setNotFoundHandler((_request, reply) => {
+	reply.type('text/html').sendFile('index.html');
+});
 
 const scheduler = new Scheduler();
 const outlet = new Outlet();
@@ -93,6 +108,16 @@ async function setup() {
 		scheduler.addTask('Climate Controller', 1, controlClimate);
 		scheduler.addTask('Records Collector', 1, collectRecords);
 		scheduler.start();
+
+		await new Promise<void>((resolve, reject) => {
+			fastify.listen({ port: 3000 }, (error, address) => {
+				if (error) {
+					return reject(error);
+				}
+				console.log(`Server running on ${address}`);
+				resolve();
+			});
+		});
 
 		console.log('Setup complete');
 	} catch (error) {
