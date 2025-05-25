@@ -7,7 +7,7 @@ export function insertRecord(record: WritableRecord) {
 			'INSERT INTO records (timestamp, temperature, humidity, light, fan, humidifier, ventilator) VALUES (?, ?, ?, ?, ?, ?, ?)',
 		)
 		.run(
-			Date.now(),
+			record.timestamp,
 			record.temperature,
 			record.humidity,
 			record.light ? 1 : 0,

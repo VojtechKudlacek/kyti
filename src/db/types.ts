@@ -9,4 +9,4 @@ export interface Record {
 	ventilator: boolean;
 }
 
-export type WritableRecord = Omit<Record, 'id' | 'timestamp'>;
+export type WritableRecord = Omit<Record, 'id'>;

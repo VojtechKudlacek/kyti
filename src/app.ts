@@ -1,3 +1,4 @@
+import { DhtSensor } from './classes/DhtSensor';
 import { Outlet, SocketSlot } from './classes/Outlet';
 import { Scheduler } from './classes/Scheduler';
 import { config } from './config';
@@ -5,11 +6,11 @@ import { insertRecord } from './db/actions';
 import { databaseClient } from './db/client';
 import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
-import { getDhtData } from './hw/dht';
 import { stringifyError } from './utils';
 
 const scheduler = new Scheduler();
 const outlet = new Outlet();
+const dht = new DhtSensor();
 
 let isTerminating = false;
 function terminate(reason: string, exitCode = 0) {
@@ -25,8 +26,8 @@ function terminate(reason: string, exitCode = 0) {
 }
 
 async function controlClimate() {
-	const dhtData = await getDhtData();
-	if (dhtData === null) {
+	await dht.read();
+	if (dht.temperature === null || dht.humidity === null) {
 		log('No DHT data available', LogType.Error);
 		return;
 	}
@@ -34,42 +35,44 @@ async function controlClimate() {
 	const ventilatorIsOn = outlet.isEnabled(SocketSlot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
 	// Turn ventilator on if temperature is too high
-	if (dhtData.temperature > config.tent.temperatureMax) {
+	if (dht.temperature > config.tent.temperatureMax) {
 		newVentilatorState = true;
 	}
 	// Turn ventilator off if it's on and temperature is within range
-	if (dhtData.temperature < config.tent.temperatureMax - config.tent.temperatureRange) {
+	if (dht.temperature < config.tent.temperatureMax - config.tent.temperatureRange) {
 		newVentilatorState = false;
 	}
 	// Turn ventilator on if humidity is too high
-	if (dhtData.humidity > config.tent.humidityMax) {
+	if (dht.humidity > config.tent.humidityMax) {
 		newVentilatorState = true;
 	}
 
 	const humidifierIsOn = outlet.isEnabled(SocketSlot.Humidifier);
 	let newHumidifierState = humidifierIsOn;
 	// Turn humidifier on if humidity is too low
-	if (dhtData.humidity < config.tent.humidityMin) {
+	if (dht.humidity < config.tent.humidityMin) {
 		newHumidifierState = true;
 	}
 	// Turn humidifier off if it's on and humidity is within range
-	if (dhtData.humidity > config.tent.humidityMin + config.tent.humidityRange) {
+	if (dht.humidity > config.tent.humidityMin + config.tent.humidityRange) {
 		newHumidifierState = false;
 	}
 
 	if (newVentilatorState !== ventilatorIsOn) {
 		await outlet.setState(SocketSlot.Ventilator, newVentilatorState);
+		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`);
 	}
 	if (newHumidifierState !== humidifierIsOn) {
 		await outlet.setState(SocketSlot.Humidifier, newHumidifierState);
+		log(`Humidifier: ${newHumidifierState ? 'on' : 'off'}`);
 	}
 }
 
-async function collectRecords() {
-	const dhtData = await getDhtData();
+function collectRecords(timestamp: number) {
 	insertRecord({
-		temperature: dhtData?.temperature ?? null,
-		humidity: dhtData?.humidity ?? null,
+		timestamp,
+		temperature: dht.temperature,
+		humidity: dht.humidity,
 		light: outlet.isEnabled(SocketSlot.Light),
 		fan: outlet.isEnabled(SocketSlot.Fan),
 		humidifier: outlet.isEnabled(SocketSlot.Humidifier),

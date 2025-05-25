@@ -11,41 +11,41 @@ export const SocketSlot = {
 } as const;
 
 export class Outlet {
-	private state = new Map<number, boolean>();
-	private api = new TuyAPI({
+	private _state = new Map<number, boolean>();
+	private _api = new TuyAPI({
 		id: config.outlet.id,
 		key: config.outlet.key,
 		issueGetOnConnect: false,
 	});
 
 	public async initialize(): Promise<void> {
-		await this.api.find();
-		const schema = (await this.api.get({ schema: true })) as DPSObject;
+		await this._api.find();
+		const schema = (await this._api.get({ schema: true })) as DPSObject;
 		for (const slot of Object.values<number>(config.outlet.slots)) {
 			const slotValue = schema.dps[slot];
-			this.state.set(slot, Boolean(slotValue));
+			this._state.set(slot, Boolean(slotValue));
 		}
 	}
 
 	public isEnabled(socket: number): boolean {
-		return Boolean(this.state.get(socket));
+		return Boolean(this._state.get(socket));
 	}
 
 	public async setState(socket: number, newState: boolean): Promise<boolean> {
 		try {
-			const connected = await this.api.connect();
+			const connected = await this._api.connect();
 			if (!connected) {
 				throw new Error('Failed to connect to outlet');
 			}
-			const response = await this.api.set({ dps: socket, set: newState });
+			const response = await this._api.set({ dps: socket, set: newState });
 			const result = response.dps[socket] === newState;
-			this.state.set(socket, result);
+			this._state.set(socket, result);
 			return result;
 		} catch (error) {
 			log(`Outlet switch error: ${stringifyError(error)}`, LogType.Error);
 			throw error;
 		} finally {
-			this.api.disconnect();
+			this._api.disconnect();
 		}
 	}
 }

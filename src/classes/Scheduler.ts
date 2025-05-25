@@ -2,16 +2,18 @@ import { addMinutes, differenceInMinutes, startOfHour, startOfMinute } from 'dat
 import { LogType, log } from '../db/log';
 import { stringifyError } from '../utils';
 
+type TaskFn = (timestamp: number) => void | Promise<void>;
+
 interface Task {
 	name: string;
 	intervalMinutes: number;
 	nextRunMinutes: number;
-	fn: () => void | Promise<void>;
+	fn: TaskFn;
 }
 
 export class Scheduler {
-	private tasks: Array<Task> = [];
-	private interval: NodeJS.Timeout | null = null;
+	private _tasks: Array<Task> = [];
+	private _interval: NodeJS.Timeout | null = null;
 
 	private get nowMinutes(): number {
 		return Math.floor(Date.now() / 60_000);
@@ -26,22 +28,23 @@ export class Scheduler {
 		return nextRun.getTime() / 60_000;
 	}
 
-	public addTask(name: string, intervalMinutes: number, fn: () => void | Promise<void>): void {
+	public addTask(name: string, intervalMinutes: number, fn: TaskFn): void {
 		const nextRunMinutes = this.calculateFirstRunTime(intervalMinutes);
-		this.tasks.push({ name, intervalMinutes, nextRunMinutes, fn });
+		this._tasks.push({ name, intervalMinutes, nextRunMinutes, fn });
 	}
 
 	public start(): void {
-		if (this.interval) {
+		if (this._interval) {
 			return;
 		}
 
-		this.interval = setInterval(async () => {
+		this._interval = setInterval(async () => {
 			const nowMinutes = this.nowMinutes;
-			for (const task of this.tasks) {
+			const nowMilliseconds = nowMinutes * 60_000;
+			for (const task of this._tasks) {
 				if (nowMinutes >= task.nextRunMinutes) {
 					try {
-						await task.fn();
+						await task.fn(nowMilliseconds);
 						task.nextRunMinutes += task.intervalMinutes;
 					} catch (error) {
 						log(`Error executing task [${task.name}]: ${stringifyError(error)}`, LogType.Error);
@@ -52,9 +55,9 @@ export class Scheduler {
 	}
 
 	public stop(): void {
-		if (this.interval) {
-			clearInterval(this.interval);
-			this.interval = null;
+		if (this._interval) {
+			clearInterval(this._interval);
+			this._interval = null;
 		}
 	}
 }
