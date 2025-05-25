@@ -76,9 +76,6 @@ async function controlClimate() {
 }
 
 function collectRecords(timestamp: number) {
-	log(
-		`Collecting records t(${dht.temperature}); h(${dht.humidity}); v(${outlet.isEnabled(SocketSlot.Ventilator)}); h(${outlet.isEnabled(SocketSlot.Humidifier)}); l(${outlet.isEnabled(SocketSlot.Light)}); f(${outlet.isEnabled(SocketSlot.Fan)});`,
-	);
 	insertRecord({
 		timestamp,
 		temperature: dht.temperature,
