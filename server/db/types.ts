@@ -10,3 +10,12 @@ export interface DatabaseRecord {
 }
 
 export type WritableDatabseRecord = Omit<DatabaseRecord, 'id'>;
+
+export interface DatabaseLog {
+	id: number;
+	timestamp: number;
+	type: 'INFO' | 'WARNING' | 'ERROR';
+	message: string;
+}
+
+export type WritableDatabaseLog = Omit<DatabaseLog, 'id'>;

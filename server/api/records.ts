@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { getRecords } from '../db/actions';
 import { stringifyError } from '../utils';
 
-interface QueryParams {
+interface GetQueryParams {
 	from?: string;
 	to?: string;
 }
@@ -10,7 +10,7 @@ interface QueryParams {
 export async function recordsRoutes(fastify: FastifyInstance) {
 	fastify.get('/', (request, reply) => {
 		try {
-			const { from, to } = request.query as QueryParams;
+			const { from, to } = request.query as GetQueryParams;
 			const fromNumber = from ? Number(from) : undefined;
 			const toNumber = to ? Number(to) : undefined;
 			return getRecords(fromNumber, toNumber);

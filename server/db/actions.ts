@@ -1,5 +1,5 @@
 import { databaseClient } from './client';
-import type { DatabaseRecord, WritableDatabseRecord } from './types';
+import type { DatabaseLog, DatabaseRecord, WritableDatabaseLog, WritableDatabseRecord } from './types';
 
 export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
 	const where: Array<string> = [];
@@ -28,4 +28,17 @@ export function insertRecord(record: WritableDatabseRecord) {
 			record.humidifier ? 1 : 0,
 			record.ventilator ? 1 : 0,
 		);
+}
+
+export function getLogs(limit = 50, page = 0): Array<DatabaseLog> {
+	const offset = page * limit;
+	return databaseClient
+		.prepare(`SELECT * FROM logs ORDER BY timestamp DESC LIMIT ${limit} OFFSET ${offset}`)
+		.all() as Array<DatabaseLog>;
+}
+
+export function insertLog(log: WritableDatabaseLog) {
+	databaseClient
+		.prepare('INSERT INTO logs (timestamp, type, message) VALUES (?, ?, ?)')
+		.run(log.timestamp, log.type, log.message);
 }

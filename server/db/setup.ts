@@ -29,7 +29,7 @@ export function setupDatabase(): void {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       timestamp INTEGER NOT NULL,
       type TEXT NOT NULL,
-      log TEXT NOT NULL
+      message TEXT NOT NULL
     )
   `);
 }
