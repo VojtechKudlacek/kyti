@@ -88,6 +88,7 @@ async function collectRecords(timestamp: number) {
 		return;
 	}
 	if (!config.features.control) {
+		await dht.read();
 		await outlet.fetchState();
 	}
 	insertRecord({
