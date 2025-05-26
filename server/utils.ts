@@ -5,22 +5,11 @@ export function stringifyError(error: unknown): string {
 	return String(error);
 }
 
-export function timeoutPromise<T>(promise: () => Promise<T>, timeout: number): Promise<T> {
-	return new Promise<T>((resolve, reject) => {
-		const timer = setTimeout(() => {
-			reject(new Error(`Timeout after ${timeout}ms`));
-		}, timeout);
-
-		promise()
-			.then((result) => {
-				clearTimeout(timer);
-				resolve(result);
-			})
-			.catch((error) => {
-				clearTimeout(timer);
-				reject(error);
-			});
-	});
+export async function timeoutPromise<T>(promise: () => Promise<T>, timeout: number): Promise<T> {
+	return await Promise.race<T>([
+		promise(),
+		new Promise((_, reject) => setTimeout(() => reject(new Error(`Timeout after ${timeout}ms`)), timeout)),
+	]);
 }
 
 export async function retryPromise<T>(fn: () => Promise<T>, retries: number, delay: number): Promise<T> {
@@ -40,11 +29,11 @@ export async function retryPromise<T>(fn: () => Promise<T>, retries: number, del
 	throw lastError;
 }
 
-export function retryPromiseWithTimeout<T>(
+export async function retryPromiseWithTimeout<T>(
 	fn: () => Promise<T>,
 	timeout = 5000,
 	retries = 3,
 	delay = 1000,
 ): Promise<T> {
-	return retryPromise(() => timeoutPromise(fn, timeout), retries, delay);
+	return await retryPromise(() => timeoutPromise(fn, timeout), retries, delay);
 }
