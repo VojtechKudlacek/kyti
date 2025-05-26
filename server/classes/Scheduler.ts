@@ -43,9 +43,9 @@ export class Scheduler {
 			const nowMilliseconds = nowMinutes * 60_000;
 			for (const task of this._tasks) {
 				if (nowMinutes >= task.nextRunMinutes) {
+					task.nextRunMinutes += task.intervalMinutes;
 					try {
 						await task.fn(nowMilliseconds);
-						task.nextRunMinutes += task.intervalMinutes;
 					} catch (error) {
 						log(`Error executing task [${task.name}]: ${stringifyError(error)}`, LogType.Error);
 					}
