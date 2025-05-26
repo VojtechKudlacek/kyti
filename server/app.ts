@@ -83,9 +83,12 @@ async function controlClimate() {
 	}
 }
 
-function collectRecords(timestamp: number) {
+async function collectRecords(timestamp: number) {
 	if (!config.features.record) {
 		return;
+	}
+	if (!config.features.control) {
+		await outlet.fetchState();
 	}
 	insertRecord({
 		timestamp,
