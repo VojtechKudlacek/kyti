@@ -5,13 +5,13 @@ export function stringifyError(error: unknown): string {
 	return String(error);
 }
 
-export function timeoutPromise<T>(promise: Promise<T>, timeout: number): Promise<T> {
+export function timeoutPromise<T>(promise: () => Promise<T>, timeout: number): Promise<T> {
 	return new Promise<T>((resolve, reject) => {
 		const timer = setTimeout(() => {
 			reject(new Error(`Timeout after ${timeout}ms`));
 		}, timeout);
 
-		promise
+		promise()
 			.then((result) => {
 				clearTimeout(timer);
 				resolve(result);
@@ -46,5 +46,5 @@ export function retryPromiseWithTimeout<T>(
 	retries = 3,
 	delay = 1000,
 ): Promise<T> {
-	return retryPromise(() => timeoutPromise(fn(), timeout), retries, delay);
+	return retryPromise(() => timeoutPromise(fn, timeout), retries, delay);
 }

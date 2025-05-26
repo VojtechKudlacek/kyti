@@ -108,6 +108,7 @@ async function setup() {
 		console.log('Setting up...');
 
 		setupDatabase();
+		dht.initialize();
 		await outlet.initialize();
 		scheduler.addTask('Climate Controller', 1, controlClimate);
 		scheduler.addTask('Records Collector', 3, collectRecords);
