@@ -13,7 +13,8 @@
 		"website:build": "tsc -b && vite build",
 		"website:lint": "biome lint website",
 		"website:check": "biome check --write website",
-		"website:preview": "vite preview"
+		"website:preview": "vite preview",
+		"db:purge": "rm kyti.db"
 	},
 	"author": "Vojtech Kudlacek",
 	"license": "MIT",
