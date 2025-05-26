@@ -1,7 +1,7 @@
 import { type SensorType, promises as sensorPromises } from 'node-dht-sensor';
 import { config } from '../config';
 import { LogType, log } from '../db/log';
-import { stringifyError } from '../utils';
+import { retryPromiseWithTimeout, stringifyError } from '../utils';
 
 export class DhtSensor {
 	private _temperature: number | null = null;
@@ -9,7 +9,9 @@ export class DhtSensor {
 
 	public async read(): Promise<void> {
 		try {
-			const { humidity, temperature } = await sensorPromises.read(config.dht.version as SensorType, config.dht.pin);
+			const { humidity, temperature } = await retryPromiseWithTimeout(() => {
+				return sensorPromises.read(config.dht.version as SensorType, config.dht.pin);
+			});
 			this._temperature = Number.parseFloat(temperature.toFixed(1));
 			this._humidity = Number.parseFloat(humidity.toFixed(1));
 		} catch (error) {
