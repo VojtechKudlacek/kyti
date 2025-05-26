@@ -7,14 +7,17 @@ export class DhtSensor {
 	private _temperature: number | null = null;
 	private _humidity: number | null = null;
 
+	private _v = config.dht.version as SensorType;
+	private _pin = config.dht.pin;
+
 	public initialize(): void {
 		sensorPromises.setMaxRetries(5);
-		sensorPromises.initialize(config.dht.version as SensorType, config.dht.pin);
+		sensorPromises.initialize(this._v, this._pin);
 	}
 
 	public async read(): Promise<void> {
 		try {
-			const { humidity, temperature } = await retryPromiseWithTimeout(() => sensorPromises.read());
+			const { humidity, temperature } = await retryPromiseWithTimeout(() => sensorPromises.read(this._v, this._pin));
 			this._temperature = Number.parseFloat(temperature.toFixed(1));
 			this._humidity = Number.parseFloat(humidity.toFixed(1));
 		} catch (error) {
