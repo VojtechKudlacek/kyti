@@ -38,6 +38,7 @@ async function controlClimate() {
 	if (dht.temperature === null || dht.humidity === null) {
 		return;
 	}
+	await outlet.fetchState();
 
 	const ventilatorIsOn = outlet.isEnabled(SocketSlot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
