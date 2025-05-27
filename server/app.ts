@@ -111,7 +111,7 @@ async function setup() {
 		dht.initialize();
 		await outlet.initialize();
 		scheduler.addTask('Climate Controller', 1, controlClimate);
-		scheduler.addTask('Records Collector', 3, collectRecords);
+		scheduler.addTask('Records Collector', 1, collectRecords);
 		scheduler.start();
 
 		fastify.register(cors);

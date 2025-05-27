@@ -1,7 +1,8 @@
-import { type SensorType, promises as sensorPromises } from 'node-dht-sensor';
+import { spawnSync } from 'node:child_process';
+import { type SensorData, type SensorType, promises as sensorPromises } from 'node-dht-sensor';
 import { config } from '../config';
 import { LogType, log } from '../db/log';
-import { retryPromiseWithTimeout, stringifyError } from '../utils';
+import { stringifyError, timeoutPromise } from '../utils';
 
 export class DhtSensor {
 	private _temperature: number | null = null;
@@ -15,9 +16,26 @@ export class DhtSensor {
 		sensorPromises.initialize(this._v, this._pin);
 	}
 
+	private async readWithOneRetry(): Promise<SensorData> {
+		let attempt = 0;
+		while (true) {
+			try {
+				return await timeoutPromise(() => sensorPromises.read(this._v, this._pin), 5000);
+			} catch (error) {
+				if (attempt === 1) {
+					throw error;
+				}
+				spawnSync('gpioset', ['gpiochip0', '17=0'], { encoding: 'utf-8' });
+				await new Promise((resolve) => setTimeout(resolve, 5000));
+				spawnSync('gpioset', ['gpiochip0', '17=1'], { encoding: 'utf-8' });
+				attempt++;
+			}
+		}
+	}
+
 	public async read(): Promise<void> {
 		try {
-			const { humidity, temperature } = await retryPromiseWithTimeout(() => sensorPromises.read(this._v, this._pin));
+			const { humidity, temperature } = await this.readWithOneRetry();
 			this._temperature = Number.parseFloat(temperature.toFixed(1));
 			this._humidity = Number.parseFloat(humidity.toFixed(1));
 		} catch (error) {
