@@ -35,9 +35,6 @@ importers:
       node-dht-sensor:
         specifier: ^0.4.5
         version: 0.4.5
-      onoff:
-        specifier: ^5.0.1
-        version: 5.0.1
       pigpio:
         specifier: ^3.3.1
         version: 3.3.1
@@ -703,10 +700,6 @@ packages:
     resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
     engines: {node: '>=10.0.0'}
 
-  epoll@3.0.0:
-    resolution: {integrity: sha512-Cr4yBZUkoKeTfi9Vr+7h1VhUYPP6t9f1/jgJOmEc2UEcWQqEOr5c4jdM0htJf+uB6KTGffDZGyR1UUUoclTwMQ==}
-    engines: {node: '>=6.0.0'}
-
   esbuild@0.25.4:
     resolution: {integrity: sha512-8pgjLUcUjcgDg+2Q4NYXnPbo/vncAY4UmyaCm0jZevERqCHZIaWwdJHkf8XQtu4AxSKCdvrUbT0XUr1IdZzI8Q==}
     engines: {node: '>=18'}
@@ -841,9 +834,6 @@ packages:
   light-my-request@6.6.0:
     resolution: {integrity: sha512-CHYbu8RtboSIoVsHZ6Ye4cj4Aw/yg2oAFimlF7mNvfDV192LR7nDiKtSIfCuLT7KokPSTn/9kfVLm5OGN0A28A==}
 
-  lodash.debounce@4.0.8:
-    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
-
   lru-cache@11.1.0:
     resolution: {integrity: sha512-QIXZUBJUx+2zHUdQujWejBkcD9+cs94tLn0+YL8UrCh+D5sCXZ4c7LaEH48pNwRY3MLDgqUFyhlCyjJPf1WP0A==}
     engines: {node: 20 || >=22}
@@ -901,10 +891,6 @@ packages:
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
-
-  onoff@5.0.1:
-    resolution: {integrity: sha512-klKLu62wVU/rt3dyiltupMuDifcfScfGsdNLdjncJBoZP7PXsJP/oEBspiB7va1SnG2muyrpl6BYD+R/nsUFMw==}
-    engines: {node: '>=6.0.0'}
 
   p-finally@1.0.0:
     resolution: {integrity: sha512-LICb2p9CB7FS+0eR1oqWnHhp0FljGLZCWBE9aix0Uye9W8LTQPwMTYVGWQWIw9RdQiDg4+epXQODwIYJtSJaow==}
@@ -1702,11 +1688,6 @@ snapshots:
 
   engine.io-parser@5.2.3: {}
 
-  epoll@3.0.0:
-    dependencies:
-      bindings: 1.5.0
-      nan: 2.22.2
-
   esbuild@0.25.4:
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.25.4
@@ -1864,8 +1845,6 @@ snapshots:
       process-warning: 4.0.1
       set-cookie-parser: 2.7.1
 
-  lodash.debounce@4.0.8: {}
-
   lru-cache@11.1.0: {}
 
   mime@3.0.0: {}
@@ -1905,11 +1884,6 @@ snapshots:
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
-
-  onoff@5.0.1:
-    dependencies:
-      epoll: 3.0.0
-      lodash.debounce: 4.0.8
 
   p-finally@1.0.0: {}
 
