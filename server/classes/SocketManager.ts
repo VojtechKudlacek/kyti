@@ -1,5 +1,5 @@
 import type { Server, Socket } from 'socket.io';
-import type { DatabaseRecord } from '../db/types';
+import type { DatabaseLog, DatabaseRecord } from '../db/types';
 
 export class SocketManager {
 	private io: Server | null = null;
@@ -24,5 +24,9 @@ export class SocketManager {
 
 	public emitNewRecord(record: DatabaseRecord) {
 		this.io?.emit('newRecord', record);
+	}
+
+	public emitNewLog(log: DatabaseLog) {
+		this.io?.emit('newLog', log);
 	}
 }
