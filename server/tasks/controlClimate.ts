@@ -4,11 +4,11 @@ import { log } from '../db/log';
 import { dht, outlet } from '../instances';
 
 export async function controlClimate() {
+	await outlet.fetchState();
 	await dht.read();
 	if (dht.temperature === null || dht.humidity === null) {
 		return;
 	}
-	await outlet.fetchState();
 
 	const ventilatorIsOn = outlet.isEnabled(SocketSlot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
