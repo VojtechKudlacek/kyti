@@ -56,3 +56,5 @@ export async function run() {
 		terminate(`Setup error - ${stringifyError(error)}`, 1);
 	}
 }
+
+run();
