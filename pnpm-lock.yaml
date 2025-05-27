@@ -38,9 +38,6 @@ importers:
       node-dht-sensor:
         specifier: ^0.4.5
         version: 0.4.5
-      node-libgpiod:
-        specifier: ^0.5.0
-        version: 0.5.0
       onoff:
         specifier: ^6.0.3
         version: 6.0.3
@@ -897,10 +894,6 @@ packages:
 
   node-dht-sensor@0.4.5:
     resolution: {integrity: sha512-abGeUZcRBrGl+jdCFXaDjGlYZo0gf4oFhr0/6IALAC/i4dlIxK7OsbU15SgfTZVe4QhaBjVqcASWWvM32if/7A==}
-
-  node-libgpiod@0.5.0:
-    resolution: {integrity: sha512-p0a9HGTkX26cVpNuMQisQZ7oDA4kOzIp9+rqKckRtWdwujIPEvmFaxWsJu+PVmP6xOpuls+UUO0bpLEJC7q1Cg==}
-    engines: {node: '>=18'}
 
   on-exit-leak-free@2.1.2:
     resolution: {integrity: sha512-0eJJY6hXLGf1udHwfNftBqH+g73EU4B504nZeKpz1sYRKafAghwxEJunB2O7rDZkL4PGfsMVnTXZ2EjibbqcsA==}
@@ -1902,11 +1895,6 @@ snapshots:
   node-dht-sensor@0.4.5:
     dependencies:
       node-addon-api: 1.7.2
-
-  node-libgpiod@0.5.0:
-    dependencies:
-      bindings: 1.5.0
-      nan: 2.22.2
 
   on-exit-leak-free@2.1.2: {}
 
