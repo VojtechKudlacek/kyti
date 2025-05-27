@@ -1,9 +1,15 @@
-const Gpio = require('pigpio').Gpio;
+const Gpio = require('onoff').Gpio;
 
-const relay = new Gpio(17, { mode: Gpio.OUTPUT });
+// Replace 17 with your actual GPIO pin number
+const relay = new Gpio(17, 'out');
 
-relay.digitalWrite(0); // Turn relay ON (active LOW)
+// Turn relay ON (usually LOW)
+relay.writeSync(0); // Active LOW
 
 setTimeout(() => {
-	relay.digitalWrite(1); // Turn relay OFF
+	// Turn relay OFF (usually HIGH)
+	relay.writeSync(1);
+
+	// Cleanup
+	relay.unexport();
 }, 2000);
