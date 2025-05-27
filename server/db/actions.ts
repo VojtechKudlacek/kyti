@@ -1,4 +1,4 @@
-import { databaseClient } from './client';
+import { databaseClient } from '../instances';
 import type { DatabaseLog, DatabaseRecord } from './types';
 
 export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {

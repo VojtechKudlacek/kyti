@@ -25,6 +25,7 @@ export class DhtSensor {
 				if (attempt === 1) {
 					throw error;
 				}
+				log('Restarting DHT sensor...');
 				spawnSync('gpioset', ['gpiochip0', '17=0'], { encoding: 'utf-8' });
 				await new Promise((resolve) => setTimeout(resolve, 5000));
 				spawnSync('gpioset', ['gpiochip0', '17=1'], { encoding: 'utf-8' });

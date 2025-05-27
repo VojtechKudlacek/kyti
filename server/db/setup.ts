@@ -1,4 +1,4 @@
-import { databaseClient } from './client';
+import { databaseClient } from '../instances';
 
 export function setupDatabase(): void {
 	// Table to store sensor readings and device states
