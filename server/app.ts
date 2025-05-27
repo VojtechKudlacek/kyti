@@ -35,10 +35,6 @@ function terminate(reason: string, exitCode = 0) {
 }
 
 async function controlClimate() {
-	if (!config.features.control) {
-		return;
-	}
-
 	await dht.read();
 	if (dht.temperature === null || dht.humidity === null) {
 		return;
@@ -84,14 +80,7 @@ async function controlClimate() {
 	}
 }
 
-async function collectRecords(timestamp: number) {
-	if (!config.features.record) {
-		return;
-	}
-	if (!config.features.control) {
-		await dht.read();
-		await outlet.fetchState();
-	}
+function collectRecords(timestamp: number) {
 	insertRecord({
 		timestamp,
 		temperature: dht.temperature,

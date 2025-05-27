@@ -27,8 +27,4 @@ export const config = {
 		temperatureRange: Number(process.env.TEMPERATURE_RANGE),
 		humidityRange: Number(process.env.HUMIDITY_RANGE),
 	},
-	features: {
-		control: Boolean(Number(process.env.FEATURE_CONTROL)),
-		record: Boolean(Number(process.env.FEATURE_RECORD)),
-	},
 };
