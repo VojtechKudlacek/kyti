@@ -5,5 +5,6 @@ onlyBuiltDependencies:
   - epoll
   - esbuild
   - node-dht-sensor
+  - node-libgpiod
   - pigpio
   - spi-device
