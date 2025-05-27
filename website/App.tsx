@@ -1,4 +1,4 @@
-import { getLogsRequest, getRecordsRequest } from 'api/calls';
+import { socket } from 'api/socket';
 import {
 	BarElement,
 	CategoryScale,
@@ -13,12 +13,13 @@ import {
 	Tooltip,
 } from 'chart.js';
 import type { ChartOptions, CoreScaleOptions, Scale, TooltipItem } from 'chart.js';
+import annotationPlugin, { type AnnotationPluginOptions } from 'chartjs-plugin-annotation';
 import { format } from 'date-fns';
-import { useAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { Chart } from 'react-chartjs-2';
-import { logsAtom } from 'store/logs';
-import { recordsAtom } from 'store/records';
+import { fetchLogsAtom, logsAtom } from 'store/logs';
+import { fetchRecordsAtom, recordsAtom } from 'store/records';
 
 // Register ChartJS components
 ChartJS.register(
@@ -32,16 +33,23 @@ ChartJS.register(
 	Tooltip,
 	Legend,
 	Filler,
+	annotationPlugin,
 );
 
 export function App() {
-	const [records, setRecords] = useAtom(recordsAtom);
-	const [, setLogs] = useAtom(logsAtom);
+	const records = useAtomValue(recordsAtom);
+	const fetchRecords = useSetAtom(fetchRecordsAtom);
+	const logs = useAtomValue(logsAtom);
+	const fetchLogs = useSetAtom(fetchLogsAtom);
 
 	useEffect(() => {
-		getRecordsRequest(Date.now() - 60 * 60 * 1000, Date.now()).then((data) => setRecords(data));
-		getLogsRequest().then((data) => setLogs(data));
-	}, [setRecords, setLogs]);
+		console.log(socket.id);
+	}, []);
+
+	useEffect(() => {
+		fetchRecords();
+		fetchLogs();
+	}, [fetchRecords, fetchLogs]);
 
 	const chartData = {
 		labels: records.map(({ timestamp }) => format(timestamp, 'HH:mm')),
@@ -111,7 +119,9 @@ export function App() {
 		],
 	};
 
-	const options: ChartOptions<'line'> = {
+	const options: ChartOptions<'line'> & {
+		plugins: { annotation: AnnotationPluginOptions };
+	} = {
 		responsive: true,
 		maintainAspectRatio: false,
 		interaction: {
@@ -122,6 +132,44 @@ export function App() {
 			title: {
 				display: true,
 				text: 'Last hour tent data',
+			},
+			annotation: {
+				annotations: {
+					tempMin: {
+						type: 'line',
+						yMin: 22,
+						yMax: 22,
+						borderColor: '#FF6B6B',
+						borderWidth: 3,
+						borderDash: [5, 5],
+					},
+					tempMax: {
+						type: 'line',
+						yMin: 26,
+						yMax: 26,
+						borderColor: '#FF6B6B',
+						borderWidth: 3,
+						borderDash: [5, 5],
+					},
+					humidityMin: {
+						type: 'line',
+						yMin: 55,
+						yMax: 55,
+						borderColor: '#4ECDC4',
+						borderWidth: 3,
+						borderDash: [5, 5],
+						yScaleID: 'y1',
+					},
+					humidityMax: {
+						type: 'line',
+						yMin: 65,
+						yMax: 65,
+						borderColor: '#4ECDC4',
+						borderWidth: 3,
+						borderDash: [5, 5],
+						yScaleID: 'y1',
+					},
+				},
 			},
 			tooltip: {
 				callbacks: {
@@ -152,9 +200,6 @@ export function App() {
 					display: true,
 					text: 'Time',
 				},
-				ticks: {
-					maxTicksLimit: 6,
-				},
 			},
 			y: {
 				type: 'linear',
@@ -168,6 +213,7 @@ export function App() {
 					color: '#FF6B6B',
 				},
 				ticks: {
+					color: '#FF6B6B',
 					callback: function (this: Scale<CoreScaleOptions>, tickValue: number | string) {
 						return `${tickValue}°C`;
 					},
@@ -185,6 +231,7 @@ export function App() {
 					color: '#4ECDC4',
 				},
 				ticks: {
+					color: '#4ECDC4',
 					callback: function (this: Scale<CoreScaleOptions>, tickValue: number | string) {
 						return `${tickValue}%`;
 					},
@@ -217,8 +264,25 @@ export function App() {
 	};
 
 	return (
-		<div style={{ width: '1280px', height: '600px' }}>
-			<Chart type="line" data={chartData} options={options} />
+		<div>
+			<div style={{ height: '100vh', margin: '0 auto' }}>
+				<Chart type="line" data={chartData} options={options} />
+			</div>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '32px 64px' }}>
+				{logs.map((log) => (
+					<div key={log.timestamp.toString()} style={{ display: 'flex', gap: '10px', fontFamily: 'monospace' }}>
+						<span>{`[${format(log.timestamp, 'HH:mm')}]`}</span>
+						<span>{log.message}</span>
+					</div>
+				))}
+			</div>
 		</div>
 	);
 }
+
+// TEMPERATURE_MIN=22
+// TEMPERATURE_MAX=26
+// TEMPERATURE_RANGE=1
+// HUMIDITY_MIN=55
+// HUMIDITY_MAX=65
+// HUMIDITY_RANGE=5

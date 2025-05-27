@@ -1,5 +1,4 @@
 export interface ApiRecord {
-	id: number;
 	timestamp: number;
 	temperature: number | null;
 	humidity: number | null;
@@ -10,7 +9,6 @@ export interface ApiRecord {
 }
 
 export interface ApiLog {
-	id: number;
 	timestamp: number;
 	type: 'INFO' | 'WARNING' | 'ERROR';
 	message: string;
