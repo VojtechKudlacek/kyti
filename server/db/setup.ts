@@ -4,8 +4,7 @@ export function setupDatabase(): void {
 	// Table to store sensor readings and device states
 	databaseClient.exec(`
     CREATE TABLE IF NOT EXISTS records (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      timestamp INTEGER NOT NULL,
+      timestamp INTEGER PRIMARY KEY,
       temperature REAL,
       humidity REAL,
       light BOOLEAN NOT NULL,
@@ -26,8 +25,7 @@ export function setupDatabase(): void {
 	// Table to store timestamped log messages
 	databaseClient.exec(`
     CREATE TABLE IF NOT EXISTS logs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      timestamp INTEGER NOT NULL,
+      timestamp INTEGER PRIMARY KEY,
       type TEXT NOT NULL,
       message TEXT NOT NULL
     )
