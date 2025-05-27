@@ -26,6 +26,7 @@
 		"chart.js": "^4.4.9",
 		"date-fns": "^4.1.0",
 		"dotenv": "^16.5.0",
+		"epoll": "^4.0.2",
 		"fastify": "^5.3.3",
 		"jotai": "^2.12.4",
 		"node-dht-sensor": "^0.4.5",

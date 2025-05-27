@@ -282,7 +282,8 @@
 	"overrides": [
 		{
 			"include": [
-				"server/**/*.ts"
+				"server/**/*.ts",
+				"test*.cjs"
 			],
 			"linter": {
 				"rules": {
