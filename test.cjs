@@ -26,6 +26,7 @@ function read() {
 			errorCount++;
 			console.error('Failed to read sensor data:', err);
 			console.error(`Error count: ${errorCount}`);
+			return;
 		}
 
 		if (minTemperature === null) {
