@@ -39,6 +39,8 @@ export async function controlClimate() {
 		newHumidifierState = false;
 	}
 
+	return;
+
 	if (newVentilatorState !== ventilatorIsOn) {
 		await outlet.setState(SocketSlot.Ventilator, newVentilatorState);
 		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`);
