@@ -14,7 +14,7 @@ export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
 		.all() as Array<DatabaseRecord>;
 }
 
-export function insertRecord(record: DatabaseRecord) {
+export function insertRecord(record: DatabaseRecord): void {
 	databaseClient
 		.prepare(
 			'INSERT INTO records (timestamp, temperature, humidity, light, fan, humidifier, ventilator) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -41,4 +41,8 @@ export function insertLog(log: DatabaseLog) {
 	databaseClient
 		.prepare('INSERT INTO logs (timestamp, type, message) VALUES (?, ?, ?)')
 		.run(log.timestamp, log.type, log.message);
+}
+
+export function deleteRecordsOlderThan(timestamp: number): void {
+	databaseClient.prepare('DELETE FROM records WHERE timestamp < ?').run(timestamp);
 }

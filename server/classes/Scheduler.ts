@@ -29,6 +29,9 @@ export class Scheduler {
 	}
 
 	public addTask(name: string, intervalMinutes: number, fn: TaskFn): void {
+		if (![1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60].includes(intervalMinutes)) {
+			throw new Error(`Invalid interval minutes: ${intervalMinutes}`);
+		}
 		const nextRunMinutes = this.calculateFirstRunTime(intervalMinutes);
 		this._tasks.push({ name, intervalMinutes, nextRunMinutes, fn });
 	}

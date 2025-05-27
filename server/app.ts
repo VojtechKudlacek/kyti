@@ -1,13 +1,14 @@
 import path from 'node:path';
 import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
+import { startOfHour, subDays } from 'date-fns';
 import Fastify from 'fastify';
 import { apiRoutes } from './api';
 import { DhtSensor } from './classes/DhtSensor';
 import { Outlet, SocketSlot } from './classes/Outlet';
 import { Scheduler } from './classes/Scheduler';
 import { config } from './config';
-import { insertRecord } from './db/actions';
+import { deleteRecordsOlderThan, insertRecord } from './db/actions';
 import { databaseClient } from './db/client';
 import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
@@ -102,6 +103,12 @@ async function collectRecords(timestamp: number) {
 	});
 }
 
+function broomRecords() {
+	const startOfThisHour = startOfHour(new Date());
+	const oneDayAgo = subDays(startOfThisHour, 1);
+	deleteRecordsOlderThan(oneDayAgo.getTime());
+}
+
 async function setup() {
 	try {
 		console.clear();
@@ -112,6 +119,7 @@ async function setup() {
 		await outlet.initialize();
 		scheduler.addTask('Climate Controller', 1, controlClimate);
 		scheduler.addTask('Records Collector', 1, collectRecords);
+		scheduler.addTask('Records Broomer', 60, broomRecords);
 		scheduler.start();
 
 		fastify.register(cors);
