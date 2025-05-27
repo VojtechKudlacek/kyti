@@ -2,6 +2,7 @@ onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@swc/core'
   - better-sqlite3
+  - epoll
   - esbuild
   - node-dht-sensor
   - spi-device
