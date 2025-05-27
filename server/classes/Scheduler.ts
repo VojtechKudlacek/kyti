@@ -15,10 +15,6 @@ export class Scheduler {
 	private _tasks: Array<Task> = [];
 	private _interval: NodeJS.Timeout | null = null;
 
-	private get nowMinutes(): number {
-		return Math.floor(Date.now() / 60_000);
-	}
-
 	private calculateFirstRunTime(intervalMinutes: number): number {
 		const now = new Date();
 		const start = startOfHour(now);
@@ -42,8 +38,9 @@ export class Scheduler {
 		}
 
 		this._interval = setInterval(async () => {
-			const nowMinutes = this.nowMinutes;
-			const nowMilliseconds = nowMinutes * 60_000;
+			const nowMilliseconds = Date.now();
+			const nowMinutes = Math.floor(nowMilliseconds / 60_000);
+
 			for (const task of this._tasks) {
 				if (nowMinutes >= task.nextRunMinutes) {
 					task.nextRunMinutes += task.intervalMinutes;

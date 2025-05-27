@@ -1,9 +1,10 @@
 import { SocketSlot } from '../classes/Outlet';
 import { insertRecord } from '../db/actions';
-import { dht, outlet } from '../instances';
+import type { DatabaseRecord } from '../db/types';
+import { dht, outlet, socketManager } from '../instances';
 
 export function collectRecords(timestamp: number) {
-	insertRecord({
+	const newRecord: DatabaseRecord = {
 		timestamp,
 		temperature: dht.temperature,
 		humidity: dht.humidity,
@@ -11,5 +12,7 @@ export function collectRecords(timestamp: number) {
 		fan: outlet.isEnabled(SocketSlot.Fan),
 		humidifier: outlet.isEnabled(SocketSlot.Humidifier),
 		ventilator: outlet.isEnabled(SocketSlot.Ventilator),
-	});
+	};
+	insertRecord(newRecord);
+	socketManager.emitNewRecord(newRecord);
 }

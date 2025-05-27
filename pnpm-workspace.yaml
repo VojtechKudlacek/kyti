@@ -3,5 +3,6 @@ onlyBuiltDependencies:
   - '@swc/core'
   - better-sqlite3
   - esbuild
+  - fastify-socket.io
   - node-dht-sensor
   - spi-device

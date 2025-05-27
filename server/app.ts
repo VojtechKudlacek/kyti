@@ -1,10 +1,11 @@
 import path from 'node:path';
 import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
+import { Server as SocketIOServer } from 'socket.io';
 import { apiRoutes } from './api';
 import { log } from './db/log';
 import { setupDatabase } from './db/setup';
-import { dht, fastify, outlet, scheduler } from './instances';
+import { dht, fastify, outlet, scheduler, socketManager } from './instances';
 import { broomRecords, collectRecords, controlClimate } from './tasks';
 import { terminate } from './terminate';
 import { stringifyError } from './utils';
@@ -33,7 +34,10 @@ export async function run() {
 			}
 			reply.type('text/html').sendFile('index.html');
 		});
-		await fastify.listen({ port: 3000 });
+		await fastify.ready();
+		const io = new SocketIOServer(fastify.server, { cors: { origin: '*' } });
+		socketManager.initialize(io);
+		await new Promise<void>((resolve) => fastify.server.listen(3000, resolve));
 
 		scheduler.addTask('Climate Controller', 1, controlClimate);
 		scheduler.addTask('Records Collector', 1, collectRecords);
