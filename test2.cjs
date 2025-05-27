@@ -1,18 +1,21 @@
-const { version, Chip, Line } = require('node-libgpiod');
+const { spawnSync } = require('node:child_process');
 
-const chip = new Chip(0);
-const line = new Line(chip, 17); // led on GPIO17
-let count = 10;
+function setGpio(pin, value) {
+	const result = spawnSync('gpioset', ['gpiochip0', `${pin}=${value}`], { encoding: 'utf-8' });
+	if (result.error) {
+		console.error('Error executing gpioget:', result.error);
+	} else if (result.status !== 0) {
+		console.error('gpioget failed:', result.stderr);
+	} else {
+		const state = result.stdout.trim();
+		console.log(`GPIO 17 state is: ${state}`);
+	}
+}
 
-console.log(version());
-line.requestOutputMode();
+async function run() {
+	setGpio(17, 0);
+	await new Promise((resolve) => setTimeout(resolve, 1000));
+	setGpio(17, 1);
+}
 
-const blink = () => {
-	if (count) {
-		line.setValue(count-- % 2);
-		setTimeout(blink, 1000);
-	} // else line.release();
-	// not needed, libgpiod releases resources on process exit
-};
-
-setTimeout(blink, 1000);
+run();
