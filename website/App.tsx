@@ -245,16 +245,10 @@ export function App() {
 				display: false,
 				position: 'right',
 				min: 0,
-				max: 20,
+				max: 30,
 				title: {
 					display: false,
 					text: 'Devices',
-				},
-				ticks: {
-					stepSize: 1,
-					includeBounds: true,
-					autoSkip: false,
-					count: 6,
 				},
 				grid: {
 					drawOnChartArea: false,
