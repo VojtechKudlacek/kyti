@@ -9,6 +9,7 @@
 		"server:check": "biome check --write server",
 		"server:build": "node build.cjs",
 		"server:start": "pnpm server:build && node server.cjs",
+		"server:deploy": "pnpm install && pnpm server:build && pm2 restart server",
 		"website:dev": "vite",
 		"website:build": "tsc -b && vite build",
 		"website:lint": "biome lint website",
