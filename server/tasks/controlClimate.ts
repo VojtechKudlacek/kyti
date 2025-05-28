@@ -17,7 +17,7 @@ export async function controlClimate() {
 		newVentilatorState = true;
 	}
 	// Turn ventilator off if it's on and temperature is within range
-	if (dht.temperature < config.tent.temperatureMax - config.tent.temperatureRange) {
+	if (dht.temperature < config.tent.temperatureMin + config.tent.temperatureRange) {
 		newVentilatorState = false;
 	}
 	// Turn ventilator on if humidity is too high, but only if temperature is within range
