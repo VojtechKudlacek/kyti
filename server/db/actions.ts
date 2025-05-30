@@ -46,3 +46,7 @@ export function insertLog(log: DatabaseLog) {
 export function deleteRecordsOlderThan(timestamp: number): void {
 	databaseClient.prepare('DELETE FROM records WHERE timestamp < ?').run(timestamp);
 }
+
+export function deleteLogsOlderThan(timestamp: number): void {
+	databaseClient.prepare('DELETE FROM logs WHERE timestamp < ?').run(timestamp);
+}

@@ -12,8 +12,8 @@ interface Task {
 }
 
 export class Scheduler {
-	private _tasks: Array<Task> = [];
-	private _interval: NodeJS.Timeout | null = null;
+	private tasks: Array<Task> = [];
+	private interval: NodeJS.Timeout | null = null;
 
 	private calculateFirstRunTime(intervalMinutes: number): number {
 		const now = new Date();
@@ -29,19 +29,19 @@ export class Scheduler {
 			throw new Error(`Invalid interval minutes: ${intervalMinutes}`);
 		}
 		const nextRunMinutes = this.calculateFirstRunTime(intervalMinutes);
-		this._tasks.push({ name, intervalMinutes, nextRunMinutes, fn });
+		this.tasks.push({ name, intervalMinutes, nextRunMinutes, fn });
 	}
 
 	public start(): void {
-		if (this._interval) {
+		if (this.interval) {
 			return;
 		}
 
-		this._interval = setInterval(async () => {
+		this.interval = setInterval(async () => {
 			const nowMilliseconds = Date.now();
 			const nowMinutes = Math.floor(nowMilliseconds / 60_000);
 
-			for (const task of this._tasks) {
+			for (const task of this.tasks) {
 				if (nowMinutes >= task.nextRunMinutes) {
 					task.nextRunMinutes += task.intervalMinutes;
 					try {
@@ -55,9 +55,9 @@ export class Scheduler {
 	}
 
 	public stop(): void {
-		if (this._interval) {
-			clearInterval(this._interval);
-			this._interval = null;
+		if (this.interval) {
+			clearInterval(this.interval);
+			this.interval = null;
 		}
 	}
 }

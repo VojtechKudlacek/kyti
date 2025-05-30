@@ -27,4 +27,5 @@ export const config = {
 		temperatureRange: Number(process.env.TEMPERATURE_RANGE),
 		humidityRange: Number(process.env.HUMIDITY_RANGE),
 	},
+	climateControlSecret: String(process.env.CLIMATE_CONTROL_SECRET),
 };

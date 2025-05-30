@@ -10,73 +10,73 @@ export const SocketSlot = {
 	Humidifier: config.outlet.slots.humidifier,
 } as const;
 
-const keepAliveMiliseconds = 5_000;
+const keepAliveMiliseconds = 10_000; // 10 seconds
 
 export class Outlet {
-	private _state = new Map<number, boolean>();
-	private _api = new TuyAPI({
+	private state = new Map<number, boolean>();
+	private api = new TuyAPI({
 		id: config.outlet.id,
 		key: config.outlet.key,
 		issueGetOnConnect: false,
 	});
-	private _scheduledDisconnect: NodeJS.Timeout | null = null;
+	private scheduledDisconnect: NodeJS.Timeout | null = null;
 
 	private async connect(): Promise<void> {
-		if (this._api.isConnected()) {
+		if (this.api.isConnected()) {
 			return;
 		}
-		const connected = await this._api.connect();
+		const connected = await this.api.connect();
 		if (!connected) {
 			throw new Error('Failed to connect to outlet');
 		}
 	}
 
 	private disconnect(): void {
-		if (this._scheduledDisconnect) {
-			clearTimeout(this._scheduledDisconnect);
+		if (this.scheduledDisconnect) {
+			clearTimeout(this.scheduledDisconnect);
 		}
-		this._scheduledDisconnect = setTimeout(() => {
-			if (this._api.isConnected()) {
-				this._api.disconnect();
-				this._scheduledDisconnect = null;
+		this.scheduledDisconnect = setTimeout(() => {
+			if (this.api.isConnected()) {
+				this.api.disconnect();
+				this.scheduledDisconnect = null;
 			}
 		}, keepAliveMiliseconds);
 	}
 
 	public async fetchState(): Promise<void> {
 		await this.connect();
-		const schema = (await this._api.get({ schema: true })) as DPSObject;
+		const schema = (await this.api.get({ schema: true })) as DPSObject;
 		for (const slot of Object.values<number>(config.outlet.slots)) {
 			const slotValue = schema.dps[slot];
-			this._state.set(slot, Boolean(slotValue));
+			this.state.set(slot, Boolean(slotValue));
 		}
 		this.disconnect();
 	}
 
 	public async initialize(): Promise<void> {
-		await this._api.find();
+		await this.api.find();
 		await this.fetchState();
 	}
 
 	public isEnabled(socket: number): boolean {
-		return Boolean(this._state.get(socket));
+		return Boolean(this.state.get(socket));
 	}
 
 	public async setState(socket: number, newState: boolean): Promise<boolean> {
 		try {
-			const connected = await this._api.connect();
+			const connected = await this.api.connect();
 			if (!connected) {
 				throw new Error('Failed to connect to outlet');
 			}
-			const response = await this._api.set({ dps: socket, set: newState });
+			const response = await this.api.set({ dps: socket, set: newState });
 			const result = Boolean(response.dps[socket]);
-			this._state.set(socket, result);
+			this.state.set(socket, result);
 			return result;
 		} catch (error) {
 			log(`Outlet switch error: ${stringifyError(error)}`, LogType.Error);
 			throw error;
 		} finally {
-			this._api.disconnect();
+			this.api.disconnect();
 		}
 	}
 }
