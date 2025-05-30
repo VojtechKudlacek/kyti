@@ -5,7 +5,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import { apiRoutes } from './api';
 import { log } from './db/log';
 import { setupDatabase } from './db/setup';
-import { dht, fastify, outlet, scheduler, socketManager } from './instances';
+import { fastify, outlet, scheduler, socketManager } from './instances';
 import { broomRecords, collectRecords, controlClimate } from './tasks';
 import { terminate } from './terminate';
 import { stringifyError } from './utils';
@@ -16,8 +16,6 @@ export async function run() {
 		console.log('Starting application...');
 
 		setupDatabase();
-
-		dht.initialize();
 
 		await outlet.initialize();
 
