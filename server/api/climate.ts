@@ -13,6 +13,7 @@ export async function climateRoutes(fastify: FastifyInstance) {
 	fastify.post('/', (request, reply) => {
 		try {
 			const { token, temperature, humidity } = request.body as PostBody;
+			console.log('Received climate data:', { temperature, humidity });
 			if (config.climateControlSecret !== token) {
 				return reply.code(401).send({ error: 'Unauthorized' });
 			}
