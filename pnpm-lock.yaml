@@ -17,6 +17,9 @@ importers:
       better-sqlite3:
         specifier: ^11.10.0
         version: 11.10.0
+      bme280-sensor:
+        specifier: ^0.1.7
+        version: 0.1.7
       chart.js:
         specifier: ^4.4.9
         version: 4.4.9
@@ -35,6 +38,9 @@ importers:
       fastify:
         specifier: ^5.3.3
         version: 5.3.3
+      i2c-bus:
+        specifier: ^5.2.3
+        version: 5.2.3
       jotai:
         specifier: ^2.12.4
         version: 2.12.4(@types/react@19.1.5)(react@19.1.0)
@@ -621,6 +627,9 @@ packages:
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
+  bme280-sensor@0.1.7:
+    resolution: {integrity: sha512-8+ss7jXMpRUUaR6bJWcvCt1bwdNqcusGjQtsuSqh5xTEZhJocDX21eo/j1g0zVZW9WEn4JAGNXyGwKTx4/Dj+A==}
+
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
 
@@ -829,6 +838,10 @@ packages:
   http-errors@2.0.0:
     resolution: {integrity: sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ==}
     engines: {node: '>= 0.8'}
+
+  i2c-bus@5.2.3:
+    resolution: {integrity: sha512-kzFgU0OSIZlaeUUa+VK7L+kkxnj4feimCVQDOPrzj0cTaB+hNweTsO8/j7QvW2gRgWQ7ds5IpfFjpBrX+fMNng==}
+    engines: {node: '>=10.0.0'}
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -1687,6 +1700,10 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
+  bme280-sensor@0.1.7:
+    dependencies:
+      i2c-bus: 5.2.3
+
   brace-expansion@2.0.1:
     dependencies:
       balanced-match: 1.0.2
@@ -1925,6 +1942,11 @@ snapshots:
       setprototypeof: 1.2.0
       statuses: 2.0.1
       toidentifier: 1.0.1
+
+  i2c-bus@5.2.3:
+    dependencies:
+      bindings: 1.5.0
+      nan: 2.22.2
 
   ieee754@1.2.1: {}
 
