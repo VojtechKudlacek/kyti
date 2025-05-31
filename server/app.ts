@@ -30,11 +30,6 @@ export async function run() {
 
 		// Fastify and Socket.io
 		fastify.register(cors);
-		fastify.addContentTypeParser(
-			'application/json',
-			{ parseAs: 'string' },
-			fastify.getDefaultJsonParser('error', 'error'),
-		);
 		fastify.register(apiRoutes, { prefix: '/api' });
 		fastify.register(fastifyStatic, {
 			root: path.join(process.cwd(), 'dist'),
