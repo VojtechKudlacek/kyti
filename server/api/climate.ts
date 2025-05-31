@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { envConfigVariable } from '../classes/EnvManager';
 import { LogType, log } from '../db/log';
 import { climateObserver, envManager } from '../instances';
+import { toFixedTenth } from '../utils';
 
 interface PostBody {
 	temperature: number;
@@ -16,7 +17,7 @@ export async function climateRoutes(fastify: FastifyInstance) {
 		if (envManager.getValue(envConfigVariable.climateControlSecret) !== token) {
 			return reply.code(401).send({ error: 'Unauthorized' });
 		}
-		climateObserver.updateClimateMeasurements(temperature, humidity);
+		climateObserver.updateClimateMeasurements(toFixedTenth(temperature), toFixedTenth(humidity));
 		return 'ok';
 	});
 }
