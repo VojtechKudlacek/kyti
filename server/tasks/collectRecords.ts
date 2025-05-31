@@ -1,4 +1,3 @@
-import { SocketSlot } from '../classes/Outlet';
 import { insertRecord } from '../db/actions';
 import type { DatabaseRecord } from '../db/types';
 import { climateObserver, outlet, socketManager } from '../instances';
@@ -10,11 +9,12 @@ export function collectRecords(timestamp: number) {
 		timestamp,
 		temperature: climateData.temperature,
 		humidity: climateData.humidity,
-		light: outlet.isEnabled(SocketSlot.Light),
-		fan: outlet.isEnabled(SocketSlot.Fan),
-		humidifier: outlet.isEnabled(SocketSlot.Humidifier),
-		ventilator: outlet.isEnabled(SocketSlot.Ventilator),
+		light: outlet.isEnabled(outlet.slot.Light),
+		fan: outlet.isEnabled(outlet.slot.Fan),
+		humidifier: outlet.isEnabled(outlet.slot.Humidifier),
+		ventilator: outlet.isEnabled(outlet.slot.Ventilator),
 	};
+
 	insertRecord(newRecord);
 	socketManager.emitNewRecord(newRecord);
 }

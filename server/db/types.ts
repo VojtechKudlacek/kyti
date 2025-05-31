@@ -1,3 +1,8 @@
+export interface DatabaseConfig {
+	key: string;
+	value: string;
+}
+
 export interface DatabaseRecord {
 	timestamp: number;
 	temperature: number | null;

@@ -1,5 +1,13 @@
 import { databaseClient } from '../instances';
-import type { DatabaseLog, DatabaseRecord } from './types';
+import type { DatabaseConfig, DatabaseLog, DatabaseRecord } from './types';
+
+export function getConfig(): Array<DatabaseConfig> {
+	return databaseClient.db.prepare<[], DatabaseConfig>('SELECT * FROM config').all();
+}
+
+export function updateConfig(key: string, value: string): void {
+	databaseClient.db.prepare<[string, string], void>('UPDATE config SET value = ? WHERE key = ?').run(value, key);
+}
 
 export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
 	const where: Array<string> = [];
@@ -9,14 +17,23 @@ export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
 	if (to) {
 		where.push(`timestamp <= ${to}`);
 	}
-	return databaseClient
-		.prepare(`SELECT * FROM records ${where.length > 0 ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY timestamp ASC`)
-		.all() as Array<DatabaseRecord>;
+	return databaseClient.db
+		.prepare<[], DatabaseRecord>(
+			`SELECT * FROM records ${where.length > 0 ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY timestamp ASC`,
+		)
+		.all()
+		.map((record) => ({
+			...record,
+			light: Boolean(record.light),
+			fan: Boolean(record.fan),
+			humidifier: Boolean(record.humidifier),
+			ventilator: Boolean(record.ventilator),
+		}));
 }
 
 export function insertRecord(record: DatabaseRecord): void {
-	databaseClient
-		.prepare(
+	databaseClient.db
+		.prepare<[number, number | null, number | null, number, number, number, number], void>(
 			'INSERT INTO records (timestamp, temperature, humidity, light, fan, humidifier, ventilator) VALUES (?, ?, ?, ?, ?, ?, ?)',
 		)
 		.run(
@@ -30,23 +47,22 @@ export function insertRecord(record: DatabaseRecord): void {
 		);
 }
 
-export function getLogs(limit = 50, page = 0): Array<DatabaseLog> {
-	const offset = page * limit;
-	return databaseClient
-		.prepare(`SELECT * FROM logs ORDER BY timestamp DESC LIMIT ${limit} OFFSET ${offset}`)
-		.all() as Array<DatabaseLog>;
+export function getLogs(limit = 50, offset = 0): Array<DatabaseLog> {
+	return databaseClient.db
+		.prepare<[], DatabaseLog>(`SELECT * FROM logs ORDER BY timestamp DESC LIMIT ${limit} OFFSET ${offset}`)
+		.all();
 }
 
 export function insertLog(log: DatabaseLog) {
-	databaseClient
-		.prepare('INSERT INTO logs (timestamp, type, message) VALUES (?, ?, ?)')
+	databaseClient.db
+		.prepare<[number, string, string], void>('INSERT INTO logs (timestamp, type, message) VALUES (?, ?, ?)')
 		.run(log.timestamp, log.type, log.message);
 }
 
 export function deleteRecordsOlderThan(timestamp: number): void {
-	databaseClient.prepare('DELETE FROM records WHERE timestamp < ?').run(timestamp);
+	databaseClient.db.prepare<[number], void>('DELETE FROM records WHERE timestamp < ?').run(timestamp);
 }
 
 export function deleteLogsOlderThan(timestamp: number): void {
-	databaseClient.prepare('DELETE FROM logs WHERE timestamp < ?').run(timestamp);
+	databaseClient.db.prepare<[number], void>('DELETE FROM logs WHERE timestamp < ?').run(timestamp);
 }

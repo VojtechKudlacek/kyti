@@ -5,6 +5,10 @@ export function stringifyError(error: unknown): string {
 	return String(error);
 }
 
+export function toFixedTenth(value: number): number {
+	return Math.round(value * 10) / 10;
+}
+
 export async function timeoutPromise<T>(promise: () => Promise<T>, timeout: number): Promise<T> {
 	return await Promise.race<T>([
 		promise(),

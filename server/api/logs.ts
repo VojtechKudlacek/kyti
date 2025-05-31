@@ -11,9 +11,10 @@ export async function logsRoutes(fastify: FastifyInstance) {
 	fastify.get('/', (request, reply) => {
 		try {
 			const { limit, page } = request.query as GetQueryParams;
-			const limitNumber = limit ? Number(limit) : undefined;
-			const pageNumber = page ? Number(page) : undefined;
-			return getLogs(limitNumber, pageNumber);
+			const limitNumber = limit ? Number.parseInt(limit, 10) : 100;
+			const pageNumber = page ? Number.parseInt(page, 10) : 0;
+			const offset = pageNumber * limitNumber;
+			return getLogs(limitNumber, offset);
 		} catch (error) {
 			return reply.code(500).send({ error: stringifyError(error) });
 		}

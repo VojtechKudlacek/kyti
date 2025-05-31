@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { addMinutes, differenceInMinutes, startOfHour, startOfMinute } from 'date-fns';
 import { LogType, log } from '../db/log';
 import { stringifyError } from '../utils';
@@ -25,9 +26,10 @@ export class Scheduler {
 	}
 
 	public addTask(name: string, intervalMinutes: number, fn: TaskFn): void {
-		if (![1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60].includes(intervalMinutes)) {
-			throw new Error(`Invalid interval minutes: ${intervalMinutes}`);
-		}
+		assert(
+			[1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60].includes(intervalMinutes),
+			`Invalid interval minutes: ${intervalMinutes}`,
+		);
 		const nextRunMinutes = this.calculateFirstRunTime(intervalMinutes);
 		this.tasks.push({ name, intervalMinutes, nextRunMinutes, fn });
 	}

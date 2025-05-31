@@ -1,4 +1,3 @@
-import { config } from '../config';
 import { socketManager } from '../instances';
 import { insertLog } from './actions';
 import type { DatabaseLog } from './types';
@@ -11,11 +10,11 @@ export const LogType = {
 
 type LogTypeValue = (typeof LogType)[keyof typeof LogType];
 
-export function log(message: string, type: LogTypeValue = LogType.Info) {
+export function log(message: string, type: LogTypeValue = LogType.Info, insertToDb = true) {
 	console.log(`[${new Date().toLocaleString('cs')}] ${type}: ${message}`);
-	if (config.database.loggingEnabled) {
+	if (insertToDb) {
 		const newLog: DatabaseLog = { timestamp: Date.now(), type, message };
-		socketManager.emitNewLog(newLog);
 		insertLog(newLog);
+		socketManager.emitNewLog(newLog);
 	}
 }

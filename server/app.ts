@@ -1,24 +1,34 @@
+import 'dotenv/config';
+
 import path from 'node:path';
 import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
 import { Server as SocketIOServer } from 'socket.io';
 import { apiRoutes } from './api';
-import { log } from './db/log';
+import { envConfigVariable } from './classes/ConfigManager';
+import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
-import { fastify, outlet, scheduler, socketManager } from './instances';
+import { configManager, databaseClient, fastify, outlet, scheduler, socketManager } from './instances';
 import { broomRecords, collectRecords, controlClimate } from './tasks';
+import { refreshOutletState } from './tasks/refreshOutletState';
 import { terminate } from './terminate';
 import { stringifyError } from './utils';
 
 export async function run() {
 	try {
 		console.clear();
-		console.log('Starting application...');
+		log('Starting application...', LogType.Info, false);
 
+		// Config and Database
+		configManager.initializeEnvConfig();
+		databaseClient.initialize(configManager.getValue(envConfigVariable.dbName));
 		setupDatabase();
+		configManager.initializeDbConfig();
 
+		// Outlet
 		await outlet.initialize();
 
+		// Fastify and Socket.io
 		fastify.register(cors);
 		fastify.register(apiRoutes, { prefix: '/api' });
 		fastify.register(fastifyStatic, {
@@ -37,11 +47,14 @@ export async function run() {
 		socketManager.initialize(io);
 		await new Promise<void>((resolve) => fastify.server.listen(3000, resolve));
 
+		// Scheduler
+		scheduler.addTask('Outlet State Refresher', 1, refreshOutletState);
 		scheduler.addTask('Climate Controller', 1, controlClimate);
 		scheduler.addTask('Records Collector', 1, collectRecords);
 		scheduler.addTask('Records Broomer', 60, broomRecords);
 		scheduler.start();
 
+		// Termination handlers
 		process.on('SIGINT', () => terminate('SIGINT')); // Ctrl+C
 		process.on('SIGTERM', () => terminate('SIGTERM')); // PM2, systemd, docker, kubernetes
 		process.on('SIGQUIT', () => terminate('SIGQUIT')); // SIGINT with core dump
