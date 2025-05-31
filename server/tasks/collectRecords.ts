@@ -1,8 +1,13 @@
+import { dbConfigVariable } from '../classes/ConfigManager';
 import { insertRecord } from '../db/actions';
 import type { DatabaseRecord } from '../db/types';
-import { climateObserver, outlet, socketManager } from '../instances';
+import { climateObserver, configManager, outlet, socketManager } from '../instances';
 
 export function collectRecords(timestamp: number) {
+	if (!configManager.getValue(dbConfigVariable.taskClimateLog)) {
+		return;
+	}
+
 	const climateData = climateObserver.getCurrentClimateData();
 
 	const newRecord: DatabaseRecord = {

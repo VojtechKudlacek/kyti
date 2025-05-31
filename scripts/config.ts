@@ -132,7 +132,7 @@ const outletOptions = [
 		DO UPDATE SET value = excluded.value
 	`);
 	for (const [key, value] of Object.entries(result)) {
-		stmt.run(key, value);
+		stmt.run(key, JSON.stringify(value));
 	}
 
 	console.log(result);
