@@ -10,7 +10,7 @@ export function terminate(reason: string, exitCode = 0) {
 	isTerminating = true;
 	log(`Terminating process: ${reason}`, exitCode === 0 ? LogType.Info : LogType.Error);
 	scheduler.stop();
-	databaseClient.close();
+	databaseClient.db.close();
 	fastify.close();
 	// Give a small grace period for cleanup operations
 	setTimeout(() => process.exit(exitCode), 100);
