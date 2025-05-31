@@ -23,6 +23,11 @@ type ConfigVariableTypeMap = {
 	[dbConfigVariable.taskClimateLog]: boolean;
 	[dbConfigVariable.taskLogBroom]: boolean;
 
+	[dbConfigVariable.graphTemperatureMin]: number;
+	[dbConfigVariable.graphTemperatureMax]: number;
+	[dbConfigVariable.graphHumidityMin]: number;
+	[dbConfigVariable.graphHumidityMax]: number;
+
 	[envConfigVariable.tuyaOutletDeviceId]: string;
 	[envConfigVariable.tuyaOutletDeviceKey]: string;
 	[envConfigVariable.climateControlSecret]: string;
@@ -33,6 +38,8 @@ type ConfigVariableTypeMap = {
 type GetValueReturnType<K extends ConfigVariable> = K extends DbConfigVariable
 	? ConfigVariableTypeMap[K] | null
 	: ConfigVariableTypeMap[K];
+
+type DbConfig = Record<DbConfigVariable, ConfigVariableTypeMap[DbConfigVariable] | null>;
 
 export const dbConfigVariable = {
 	temperatureMin: 'TEMPERATURE_MIN',
@@ -51,6 +58,11 @@ export const dbConfigVariable = {
 	taskClimateControl: 'TASK_CLIMATE_CONTROL',
 	taskClimateLog: 'TASK_CLIMATE_LOG',
 	taskLogBroom: 'TASK_LOG_BROOM',
+
+	graphTemperatureMin: 'GRAPH_TEMPERATURE_MIN',
+	graphTemperatureMax: 'GRAPH_TEMPERATURE_MAX',
+	graphHumidityMin: 'GRAPH_HUMIDITY_MIN',
+	graphHumidityMax: 'GRAPH_HUMIDITY_MAX',
 } as const;
 
 export const envConfigVariable = {
@@ -67,7 +79,7 @@ export const envConfigVariables = Object.values(envConfigVariable);
 export class ConfigManager {
 	private config: Map<ConfigVariable, ConfigVariableTypeMap[ConfigVariable] | null> = new Map();
 
-	private isDbConfigVariable(variable: string): variable is DbConfigVariable {
+	public isDbConfigVariable(variable: string): variable is DbConfigVariable {
 		return dbConfigVariables.includes(variable as DbConfigVariable);
 	}
 
@@ -96,5 +108,9 @@ export class ConfigManager {
 	public setValue<K extends ConfigVariable>(variable: K, value: ConfigVariableTypeMap[K]) {
 		this.config.set(variable, value);
 		updateConfig(variable, JSON.stringify(value));
+	}
+
+	public getDbConfig(): DbConfig {
+		return Object.fromEntries(dbConfigVariables.map((variable) => [variable, this.getValue(variable)])) as DbConfig;
 	}
 }

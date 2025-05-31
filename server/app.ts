@@ -42,6 +42,10 @@ export async function run() {
 			}
 			reply.type('text/html').sendFile('index.html');
 		});
+		fastify.setErrorHandler((error, _request, reply) => {
+			log(`Error: ${stringifyError(error)}`, LogType.Error, false);
+			reply.status(500).send({ error });
+		});
 		await fastify.ready();
 		const io = new SocketIOServer(fastify.server, { cors: { origin: '*' } });
 		socketManager.initialize(io);
