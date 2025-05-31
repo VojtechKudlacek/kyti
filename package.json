@@ -15,7 +15,8 @@
 		"website:lint": "biome lint website",
 		"website:check": "biome check --write website",
 		"website:preview": "vite preview",
-		"db:purge": "rm kyti.db"
+		"db:purge": "rm kyti.db",
+		"db:config": "node scripts/config.ts"
 	},
 	"author": "Vojtech Kudlacek",
 	"license": "MIT",
@@ -30,6 +31,7 @@
 		"dotenv": "^16.5.0",
 		"fastify": "^5.3.3",
 		"jotai": "^2.12.4",
+		"prompts": "^2.4.2",
 		"react": "^19.1.0",
 		"react-chartjs-2": "^5.3.0",
 		"react-dom": "^19.1.0",
@@ -41,6 +43,7 @@
 		"@biomejs/biome": "^1.9.4",
 		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "^20.11.24",
+		"@types/prompts": "^2.4.9",
 		"@types/react": "^19.1.5",
 		"@types/react-dom": "^19.1.5",
 		"@vitejs/plugin-react-swc": "^3.10.0",

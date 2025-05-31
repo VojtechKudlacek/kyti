@@ -9,8 +9,8 @@
 		"include": [
 			"website",
 			"server",
-			"*.json",
-			"test*.cjs"
+			"scripts",
+			"*.json"
 		],
 		"ignoreUnknown": false,
 		"ignore": []
