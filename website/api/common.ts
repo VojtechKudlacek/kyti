@@ -1,6 +1,7 @@
 export const Path = {
 	Records: '/records',
 	Logs: '/logs',
+	Config: '/config',
 } as const;
 
 type PathType = (typeof Path)[keyof typeof Path];
