@@ -16,6 +16,10 @@ export async function configRoutes(fastify: FastifyInstance) {
 		const { key } = request.params as { key: string };
 		const { value, secret } = request.body as PostBody;
 		console.log(request.body);
+		console.log(typeof request.body);
+		console.log(request.body?.secret);
+		console.log(request.body?.value);
+		console.log(JSON.parse(request.body as string));
 		if (!configManager.isConfigVariable(key)) {
 			return reply.code(400).send({ error: 'Invalid key' });
 		}
