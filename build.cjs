@@ -15,16 +15,21 @@ esbuild.build({
   bundle: true,
   outfile: 'server.cjs',
   platform: 'node',
-  target: 'node22',
+  target: 'node24',
   format: 'cjs',
   sourcemap: false,
   minify: false,
 	metafile: true,
 	tsconfig: 'tsconfig.server.json',
   external: [
-    'better-sqlite3',
-    'node-dht-sensor',
-    'spi-device'
+		'@fastify/cors',
+		'@fastify/static',
+		'better-sqlite3',
+		'date-fns',
+		'dotenv',
+		'fastify',
+		'socket.io',
+		'tuyapi',
   ]
 }).then((result) => {
 	for (const output in result.metafile.outputs) {

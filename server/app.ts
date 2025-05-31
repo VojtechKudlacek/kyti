@@ -5,10 +5,10 @@ import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
 import { Server as SocketIOServer } from 'socket.io';
 import { apiRoutes } from './api';
-import { envConfigVariable } from './classes/ConfigManager';
+import { envConfigVariable } from './classes/EnvManager';
 import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
-import { configManager, databaseClient, fastify, outlet, scheduler, socketManager } from './instances';
+import { configManager, databaseClient, envManager, fastify, outlet, scheduler, socketManager } from './instances';
 import { broomRecords, collectRecords, controlClimate } from './tasks';
 import { refreshOutletState } from './tasks/refreshOutletState';
 import { terminate } from './terminate';
@@ -20,10 +20,10 @@ export async function run() {
 		log('Starting application...', LogType.Info, false);
 
 		// Config and Database
-		configManager.initializeEnvConfig();
-		databaseClient.initialize(configManager.getValue(envConfigVariable.dbName));
+		envManager.initialize();
+		databaseClient.initialize(envManager.getValue(envConfigVariable.dbName));
 		setupDatabase();
-		configManager.initializeDbConfig();
+		configManager.initialize();
 
 		// Outlet
 		await outlet.initialize();

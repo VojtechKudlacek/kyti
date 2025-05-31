@@ -1,9 +1,8 @@
-import assert from 'node:assert/strict';
 import { getConfig, updateConfig } from '../db/actions';
 
-type DbConfigVariable = (typeof dbConfigVariable)[keyof typeof dbConfigVariable];
-type EnvConfigVariable = (typeof envConfigVariable)[keyof typeof envConfigVariable];
-type ConfigVariable = DbConfigVariable | EnvConfigVariable;
+type ConfigVariable = (typeof dbConfigVariable)[keyof typeof dbConfigVariable];
+
+type DbConfig = Record<ConfigVariable, ConfigVariableTypeMap[ConfigVariable] | null>;
 
 type ConfigVariableTypeMap = {
 	[dbConfigVariable.temperatureMin]: number;
@@ -27,19 +26,7 @@ type ConfigVariableTypeMap = {
 	[dbConfigVariable.graphTemperatureMax]: number;
 	[dbConfigVariable.graphHumidityMin]: number;
 	[dbConfigVariable.graphHumidityMax]: number;
-
-	[envConfigVariable.tuyaOutletDeviceId]: string;
-	[envConfigVariable.tuyaOutletDeviceKey]: string;
-	[envConfigVariable.climateControlSecret]: string;
-	[envConfigVariable.adminPassword]: string;
-	[envConfigVariable.dbName]: string;
 };
-
-type GetValueReturnType<K extends ConfigVariable> = K extends DbConfigVariable
-	? ConfigVariableTypeMap[K] | null
-	: ConfigVariableTypeMap[K];
-
-type DbConfig = Record<DbConfigVariable, ConfigVariableTypeMap[DbConfigVariable] | null>;
 
 export const dbConfigVariable = {
 	temperatureMin: 'TEMPERATURE_MIN',
@@ -65,44 +52,27 @@ export const dbConfigVariable = {
 	graphHumidityMax: 'GRAPH_HUMIDITY_MAX',
 } as const;
 
-export const envConfigVariable = {
-	tuyaOutletDeviceId: 'TUYA_OUTLET_DEVICE_ID',
-	tuyaOutletDeviceKey: 'TUYA_OUTLET_DEVICE_KEY',
-	climateControlSecret: 'CLIMATE_CONTROL_SECRET',
-	adminPassword: 'ADMIN_PASSWORD',
-	dbName: 'DB_NAME',
-} as const;
-
 export const dbConfigVariables = Object.values(dbConfigVariable);
-export const envConfigVariables = Object.values(envConfigVariable);
 
 export class ConfigManager {
 	private config: Map<ConfigVariable, ConfigVariableTypeMap[ConfigVariable] | null> = new Map();
 
-	public isDbConfigVariable(variable: string): variable is DbConfigVariable {
-		return dbConfigVariables.includes(variable as DbConfigVariable);
+	public isConfigVariable(variable: string): variable is ConfigVariable {
+		return dbConfigVariables.includes(variable as ConfigVariable);
 	}
 
-	public initializeEnvConfig(): void {
-		for (const variable of envConfigVariables) {
-			const value = process.env[variable];
-			assert(value, `Environment variable ${variable} is not set`);
-			this.config.set(variable, value);
-		}
-	}
-
-	public initializeDbConfig(): void {
+	public initialize(): void {
 		const dbConfig = getConfig();
 		for (const config of dbConfig) {
-			if (this.isDbConfigVariable(config.key)) {
+			if (this.isConfigVariable(config.key)) {
 				this.config.set(config.key, JSON.parse(config.value));
 			}
 		}
 	}
 
-	public getValue<K extends ConfigVariable>(variable: K): GetValueReturnType<K> {
+	public getValue<K extends ConfigVariable>(variable: K): ConfigVariableTypeMap[K] | null {
 		const value = this.config.get(variable);
-		return value as GetValueReturnType<K>;
+		return value as ConfigVariableTypeMap[K] | null;
 	}
 
 	public setValue<K extends ConfigVariable>(variable: K, value: ConfigVariableTypeMap[K]) {
@@ -110,7 +80,7 @@ export class ConfigManager {
 		updateConfig(variable, JSON.stringify(value));
 	}
 
-	public getDbConfig(): DbConfig {
+	public getConfig(): DbConfig {
 		return Object.fromEntries(dbConfigVariables.map((variable) => [variable, this.getValue(variable)])) as DbConfig;
 	}
 }

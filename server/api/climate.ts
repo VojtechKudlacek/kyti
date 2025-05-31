@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
-import { envConfigVariable } from '../classes/ConfigManager';
+import { envConfigVariable } from '../classes/EnvManager';
 import { LogType, log } from '../db/log';
-import { climateObserver, configManager } from '../instances';
+import { climateObserver, envManager } from '../instances';
 
 interface PostBody {
 	temperature: number;
@@ -13,7 +13,7 @@ export async function climateRoutes(fastify: FastifyInstance) {
 	fastify.post('/', (request, reply) => {
 		const { token, temperature, humidity } = request.body as PostBody;
 		log(`Received climate data: ${temperature}°C, ${humidity}%`, LogType.Info, false);
-		if (configManager.getValue(envConfigVariable.climateControlSecret) !== token) {
+		if (envManager.getValue(envConfigVariable.climateControlSecret) !== token) {
 			return reply.code(401).send({ error: 'Unauthorized' });
 		}
 		climateObserver.updateClimateMeasurements(temperature, humidity);

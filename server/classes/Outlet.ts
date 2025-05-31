@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import TuyAPI, { type DPSObject } from 'tuyapi';
 import { LogType, log } from '../db/log';
-import { configManager } from '../instances';
+import { configManager, envManager } from '../instances';
 import { stringifyError } from '../utils';
-import { dbConfigVariable, envConfigVariable } from './ConfigManager';
+import { dbConfigVariable } from './ConfigManager';
+import { envConfigVariable } from './EnvManager';
 
 interface SocketSlots {
 	Light: number | null;
@@ -59,8 +60,8 @@ export class Outlet {
 
 	public async initialize(): Promise<void> {
 		this.api = new TuyAPI({
-			id: configManager.getValue(envConfigVariable.tuyaOutletDeviceId),
-			key: configManager.getValue(envConfigVariable.tuyaOutletDeviceKey),
+			id: envManager.getValue(envConfigVariable.tuyaOutletDeviceId),
+			key: envManager.getValue(envConfigVariable.tuyaOutletDeviceKey),
 			issueGetOnConnect: false,
 		});
 		this.slot.Light = configManager.getValue(dbConfigVariable.outletSlotLight);
