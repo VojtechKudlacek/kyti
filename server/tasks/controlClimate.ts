@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { dbConfigVariable } from '../classes/ConfigManager';
-import { log } from '../db/log';
+import { LogType, log } from '../db/log';
 import { climateObserver, configManager, outlet } from '../instances';
 
 export async function controlClimate() {
@@ -55,11 +55,11 @@ export async function controlClimate() {
 
 	if (newVentilatorState !== ventilatorIsOn) {
 		await outlet.setState(outlet.slot.Ventilator, newVentilatorState);
-		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`);
+		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`, LogType.Info, false);
 	}
 
 	if (newHumidifierState !== humidifierIsOn) {
 		await outlet.setState(outlet.slot.Humidifier, newHumidifierState);
-		log(`Humidifier: ${newHumidifierState ? 'on' : 'off'}`);
+		log(`Humidifier: ${newHumidifierState ? 'on' : 'off'}`, LogType.Info, false);
 	}
 }
