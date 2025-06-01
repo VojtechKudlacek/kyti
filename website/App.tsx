@@ -18,6 +18,7 @@ import { useEffect } from 'react';
 import { configAtom, fetchConfigAtom } from 'store/config';
 import { fetchLogsAtom } from 'store/logs';
 import { fetchRecordsAtom } from 'store/records';
+import { ConfigOverviewContainer } from 'ui/containers/ConfigOverviewContainer';
 import { CurrentStateContainer } from 'ui/containers/CurrentStateContainer';
 import { GraphContainer } from 'ui/containers/GraphContainer';
 import { LogsContainer } from 'ui/containers/LogsContainer';
@@ -62,6 +63,7 @@ export function App() {
 			<CurrentStateContainer />
 			<GraphContainer />
 			<LogsContainer />
+			<ConfigOverviewContainer />
 		</div>
 	);
 }
