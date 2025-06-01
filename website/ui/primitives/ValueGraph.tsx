@@ -14,7 +14,9 @@ interface ValueGraphProps<T = unknown> {
 	data: Array<T>;
 }
 
-type GraphOptions = ChartOptions<'line'> & { plugins: { annotation: AnnotationPluginOptions } };
+type GraphOptions = ChartOptions<'line'> & {
+	plugins: { annotation: AnnotationPluginOptions };
+};
 type GraphData<T> = ChartData<'line', Array<T>, string>;
 
 export function ValueGraph<T>({
@@ -35,6 +37,7 @@ export function ValueGraph<T>({
 				label: title,
 				data,
 				borderColor: color,
+				backgroundColor: color,
 				yAxisID: 'y',
 				tension: 0.4,
 				type: 'line' as const,
@@ -51,8 +54,7 @@ export function ValueGraph<T>({
 		},
 		plugins: {
 			title: {
-				display: true,
-				text: `${title} data`,
+				display: false,
 			},
 			legend: {
 				display: false,
@@ -110,7 +112,7 @@ export function ValueGraph<T>({
 	};
 
 	return (
-		<div style={{ width: '100%', height: '300px' }}>
+		<div style={{ width: '100%', height: '200px' }}>
 			<Chart type="line" data={chartData} options={options} />
 		</div>
 	);

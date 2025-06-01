@@ -1,3 +1,4 @@
+import { Card } from 'antd';
 import { format } from 'date-fns';
 import { useAtomValue } from 'jotai';
 import { configAtom } from 'store/config';
@@ -8,7 +9,6 @@ import { HumidityGraph } from 'ui/components/HumidityGraph';
 import { LightGraph } from 'ui/components/LightGraph';
 import { TemperatureGraph } from 'ui/components/TemperatureGraph';
 import { VentilatorGraph } from 'ui/components/VentilatorGraph';
-import { Card } from 'ui/primitives/Card';
 
 export function GraphContainer() {
 	const records = useAtomValue(recordsAtom);
@@ -20,7 +20,7 @@ export function GraphContainer() {
 	}
 
 	return (
-		<Card>
+		<Card title="Graphs" size="small">
 			<HumidityGraph records={records} config={config} labels={labels} />
 			<TemperatureGraph records={records} config={config} labels={labels} />
 			<LightGraph records={records} labels={labels} />

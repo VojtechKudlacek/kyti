@@ -1,4 +1,4 @@
-import type { ChartData, ChartOptions, CoreScaleOptions, Scale, TooltipItem } from 'chart.js';
+import type { ChartData, ChartOptions, CoreScaleOptions, Scale } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 
 interface OnOffGraphProps {
@@ -36,6 +36,12 @@ export function OnOffGraph({ title, color, labels, data }: OnOffGraphProps) {
 			mode: 'index',
 			intersect: false,
 		},
+		layout: {
+			padding: {
+				right: 18,
+				left: 11,
+			},
+		},
 		plugins: {
 			annotation: {
 				annotations: {
@@ -53,13 +59,7 @@ export function OnOffGraph({ title, color, labels, data }: OnOffGraphProps) {
 				display: false,
 			},
 			tooltip: {
-				callbacks: {
-					label: function (context: TooltipItem<'line'>) {
-						const label = context.dataset.label || '';
-						const value = context.parsed.y;
-						return `${label}: ${value === 1 ? 'On' : 'Off'}`;
-					},
-				},
+				enabled: false,
 			},
 		},
 		scales: {

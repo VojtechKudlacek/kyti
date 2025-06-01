@@ -13,13 +13,14 @@ import {
 	Tooltip,
 } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import { format } from 'date-fns';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { configAtom, fetchConfigAtom } from 'store/config';
-import { fetchLogsAtom, logsAtom } from 'store/logs';
+import { fetchLogsAtom } from 'store/logs';
 import { fetchRecordsAtom } from 'store/records';
+import { CurrentStateContainer } from 'ui/containers/CurrentStateContainer';
 import { GraphContainer } from 'ui/containers/GraphContainer';
+import { LogsContainer } from 'ui/containers/LogsContainer';
 
 // Register ChartJS components
 ChartJS.register(
@@ -38,7 +39,6 @@ ChartJS.register(
 
 export function App() {
 	const fetchRecords = useSetAtom(fetchRecordsAtom);
-	const logs = useAtomValue(logsAtom);
 	const fetchLogs = useSetAtom(fetchLogsAtom);
 	const config = useAtomValue(configAtom);
 	const fetchConfig = useSetAtom(fetchConfigAtom);
@@ -58,18 +58,10 @@ export function App() {
 	}
 
 	return (
-		<div style={{ padding: '16px' }}>
-			<div style={{ margin: '0 auto' }}>
-				<GraphContainer />
-			</div>
-			<div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px' }}>
-				{logs.map((log) => (
-					<div key={log.timestamp.toString()} style={{ display: 'flex', gap: '10px', fontFamily: 'monospace' }}>
-						<span>{`[${format(log.timestamp, 'HH:mm')}]`}</span>
-						<span>{log.message}</span>
-					</div>
-				))}
-			</div>
+		<div style={{ padding: '16px', backgroundColor: '#f0f2f5', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+			<CurrentStateContainer />
+			<GraphContainer />
+			<LogsContainer />
 		</div>
 	);
 }
