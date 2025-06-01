@@ -8,7 +8,7 @@ export function LogsContainer() {
 
 	return (
 		<Card title="Logs" size="small">
-			<LogList logs={logs} />
+			<LogList logs={logs.slice(0, 10)} />
 		</Card>
 	);
 }

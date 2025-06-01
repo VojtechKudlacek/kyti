@@ -1,0 +1,7 @@
+.logList li:last-child {
+	padding-bottom: 0;
+}
+
+.logList li:last-child div:last-child {
+	min-height: 0;
+}
