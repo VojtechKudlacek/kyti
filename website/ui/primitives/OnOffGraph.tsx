@@ -19,7 +19,8 @@ export function OnOffGraph({ title, color, labels, data }: OnOffGraphProps) {
 				label: title,
 				data,
 				borderColor: color,
-				backgroundColor: color,
+				backgroundColor: `${color}30`,
+				fill: true,
 				type: 'line' as const,
 				tension: 0,
 				pointRadius: 0,
@@ -36,6 +37,21 @@ export function OnOffGraph({ title, color, labels, data }: OnOffGraphProps) {
 			intersect: false,
 		},
 		plugins: {
+			annotation: {
+				annotations: {
+					offState: {
+						type: 'line',
+						yMin: 0,
+						yMax: 0,
+						borderColor: `${color}50`,
+						borderWidth: 3,
+						borderDash: [5, 5],
+					},
+				},
+			},
+			legend: {
+				display: false,
+			},
 			tooltip: {
 				callbacks: {
 					label: function (context: TooltipItem<'line'>) {
@@ -44,9 +60,6 @@ export function OnOffGraph({ title, color, labels, data }: OnOffGraphProps) {
 						return `${label}: ${value === 1 ? 'On' : 'Off'}`;
 					},
 				},
-			},
-			legend: {
-				display: false,
 			},
 		},
 		scales: {

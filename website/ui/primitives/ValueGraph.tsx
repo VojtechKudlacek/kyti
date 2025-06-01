@@ -35,7 +35,6 @@ export function ValueGraph<T>({
 				label: title,
 				data,
 				borderColor: color,
-				backgroundColor: color,
 				yAxisID: 'y',
 				tension: 0.4,
 				type: 'line' as const,
