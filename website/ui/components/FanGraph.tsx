@@ -7,12 +7,5 @@ interface FanGraphProps {
 }
 
 export function FanGraph({ records, labels }: FanGraphProps) {
-	return (
-		<OnOffGraph
-			title="Fan"
-			color="#E17055"
-			labels={labels}
-			data={records.map(({ ventilator }) => (ventilator ? 1 : 0))}
-		/>
-	);
+	return <OnOffGraph title="Fan" color="#E17055" labels={labels} data={records.map(({ fan }) => (fan ? 1 : 0))} />;
 }
