@@ -33,7 +33,7 @@ export function getRecords(from?: number, to?: number): Array<RecordEntity> {
 
 export function insertRecord(record: RecordEntity): void {
 	databaseClient.db
-		.prepare<[number, number | null, number | null, number, number, number, number], void>(
+		.prepare<[number, number | null, number | null, number, number, number, number], RecordEntity>(
 			'INSERT INTO records (timestamp, temperature, humidity, light, fan, humidifier, ventilator) VALUES (?, ?, ?, ?, ?, ?, ?)',
 		)
 		.run(
@@ -47,10 +47,8 @@ export function insertRecord(record: RecordEntity): void {
 		);
 }
 
-export function getLogs(limit = 50, offset = 0): Array<LogEntity> {
-	return databaseClient.db
-		.prepare<[], LogEntity>(`SELECT * FROM logs ORDER BY timestamp DESC LIMIT ${limit} OFFSET ${offset}`)
-		.all();
+export function getLogs(): Array<LogEntity> {
+	return databaseClient.db.prepare<[], LogEntity>('SELECT * FROM logs ORDER BY timestamp DESC').all();
 }
 
 export function insertLog(log: LogEntity) {
