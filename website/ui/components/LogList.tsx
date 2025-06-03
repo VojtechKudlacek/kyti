@@ -1,21 +1,42 @@
-import { Timeline, type TimelineItemProps } from 'antd';
+import { Table, Tag } from 'antd';
 import { format } from 'date-fns';
+import { useMemo } from 'react';
 import type { ApiLog } from 'types';
-import styles from './LogList.module.css';
+
+const columnsDefinition = [
+	{
+		title: 'Message',
+		dataIndex: 'message',
+		key: 'message',
+	},
+	{
+		title: 'Time',
+		dataIndex: 'time',
+		key: 'time',
+	},
+	{
+		title: 'Type',
+		dataIndex: 'type',
+		key: 'type',
+		render: (type: string) => {
+			return <Tag color={type === 'INFO' ? 'blue' : type === 'WARNING' ? 'orange' : 'red'}>{type}</Tag>;
+		},
+	},
+];
 
 interface LogListProps {
 	logs: Array<ApiLog>;
 }
 
 export function LogList({ logs }: LogListProps) {
-	const items: Array<TimelineItemProps> = logs.map((log) => ({
-		children: (
-			<span>
-				[{format(log.timestamp, 'dd.MM.yyyy HH:mm')}] {log.message}
-			</span>
-		),
-		color: log.type === 'INFO' ? 'blue' : log.type === 'WARNING' ? 'orange' : 'red',
-	}));
+	const dataSource = useMemo(() => {
+		return logs.map((log) => ({
+			key: `LogList-${log.timestamp}`,
+			message: log.message,
+			type: log.type,
+			time: format(log.timestamp, 'dd.MM.yyyy HH:mm:ss'),
+		}));
+	}, [logs]);
 
-	return <Timeline items={items} className={styles.logList} />;
+	return <Table dataSource={dataSource} columns={columnsDefinition} />;
 }
