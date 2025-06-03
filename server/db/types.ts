@@ -1,9 +1,9 @@
-export interface DatabaseConfig {
+export interface ConfigEntity {
 	key: string;
 	value: string;
 }
 
-export interface DatabaseRecord {
+export interface RecordEntity {
 	timestamp: number;
 	temperature: number | null;
 	humidity: number | null;
@@ -13,7 +13,7 @@ export interface DatabaseRecord {
 	ventilator: boolean;
 }
 
-export interface DatabaseLog {
+export interface LogEntity {
 	timestamp: number;
 	type: 'INFO' | 'WARNING' | 'ERROR';
 	message: string;

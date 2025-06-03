@@ -1,15 +1,15 @@
 import { databaseClient } from '../instances';
-import type { DatabaseConfig, DatabaseLog, DatabaseRecord } from './types';
+import type { ConfigEntity, LogEntity, RecordEntity } from './types';
 
-export function getConfig(): Array<DatabaseConfig> {
-	return databaseClient.db.prepare<[], DatabaseConfig>('SELECT * FROM config').all();
+export function getConfig(): Array<ConfigEntity> {
+	return databaseClient.db.prepare<[], ConfigEntity>('SELECT * FROM config').all();
 }
 
 export function updateConfig(key: string, value: string): void {
 	databaseClient.db.prepare<[string, string], void>('UPDATE config SET value = ? WHERE key = ?').run(value, key);
 }
 
-export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
+export function getRecords(from?: number, to?: number): Array<RecordEntity> {
 	const where: Array<string> = [];
 	if (from) {
 		where.push(`timestamp >= ${from}`);
@@ -18,7 +18,7 @@ export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
 		where.push(`timestamp <= ${to}`);
 	}
 	return databaseClient.db
-		.prepare<[], DatabaseRecord>(
+		.prepare<[], RecordEntity>(
 			`SELECT * FROM records ${where.length > 0 ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY timestamp ASC`,
 		)
 		.all()
@@ -31,7 +31,7 @@ export function getRecords(from?: number, to?: number): Array<DatabaseRecord> {
 		}));
 }
 
-export function insertRecord(record: DatabaseRecord): void {
+export function insertRecord(record: RecordEntity): void {
 	databaseClient.db
 		.prepare<[number, number | null, number | null, number, number, number, number], void>(
 			'INSERT INTO records (timestamp, temperature, humidity, light, fan, humidifier, ventilator) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -47,13 +47,13 @@ export function insertRecord(record: DatabaseRecord): void {
 		);
 }
 
-export function getLogs(limit = 50, offset = 0): Array<DatabaseLog> {
+export function getLogs(limit = 50, offset = 0): Array<LogEntity> {
 	return databaseClient.db
-		.prepare<[], DatabaseLog>(`SELECT * FROM logs ORDER BY timestamp DESC LIMIT ${limit} OFFSET ${offset}`)
+		.prepare<[], LogEntity>(`SELECT * FROM logs ORDER BY timestamp DESC LIMIT ${limit} OFFSET ${offset}`)
 		.all();
 }
 
-export function insertLog(log: DatabaseLog) {
+export function insertLog(log: LogEntity) {
 	databaseClient.db
 		.prepare<[number, string, string], void>('INSERT INTO logs (timestamp, type, message) VALUES (?, ?, ?)')
 		.run(log.timestamp, log.type, log.message);

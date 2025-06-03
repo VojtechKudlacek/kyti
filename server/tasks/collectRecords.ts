@@ -1,6 +1,6 @@
 import { dbConfigVariable } from '../classes/ConfigManager';
 import { insertRecord } from '../db/actions';
-import type { DatabaseRecord } from '../db/types';
+import type { RecordEntity } from '../db/types';
 import { climateObserver, configManager, outlet, socketManager } from '../instances';
 
 export function collectRecords(timestamp: number) {
@@ -10,7 +10,7 @@ export function collectRecords(timestamp: number) {
 
 	const climateData = climateObserver.getCurrentClimateData();
 
-	const newRecord: DatabaseRecord = {
+	const newRecord: RecordEntity = {
 		timestamp,
 		temperature: climateData.temperature,
 		humidity: climateData.humidity,
