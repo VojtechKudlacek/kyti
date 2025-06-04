@@ -3,11 +3,10 @@ import { format } from 'date-fns';
 import { useAtomValue } from 'jotai';
 import { configAtom } from 'store/config';
 import { recordsAtom } from 'store/records';
+import { ClimateGraph } from 'ui/components/ClimateGraph';
 import { FanGraph } from 'ui/components/FanGraph';
 import { HumidifierGraph } from 'ui/components/HumidifierGraph';
-import { HumidityGraph } from 'ui/components/HumidityGraph';
 import { LightGraph } from 'ui/components/LightGraph';
-import { TemperatureGraph } from 'ui/components/TemperatureGraph';
 import { VentilatorGraph } from 'ui/components/VentilatorGraph';
 
 export function GraphContainer() {
@@ -21,8 +20,7 @@ export function GraphContainer() {
 
 	return (
 		<Card title="Graphs" size="small">
-			<HumidityGraph records={records} config={config} labels={labels} />
-			<TemperatureGraph records={records} config={config} labels={labels} />
+			<ClimateGraph records={records} config={config} labels={labels} />
 			<LightGraph records={records} labels={labels} />
 			<VentilatorGraph records={records} labels={labels} />
 			<HumidifierGraph records={records} labels={labels} />

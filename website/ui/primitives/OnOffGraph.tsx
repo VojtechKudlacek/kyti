@@ -38,7 +38,7 @@ export function OnOffGraph({ title, color, labels, data }: OnOffGraphProps) {
 		},
 		layout: {
 			padding: {
-				right: 18,
+				right: 62,
 				left: 11,
 			},
 		},
