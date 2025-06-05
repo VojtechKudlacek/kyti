@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import { configAtom } from 'store/config';
 import { ConfigOverview } from 'ui/components/ConfigOverview';
 
-export function ConfigOverviewContainer() {
+export function ConfigCard() {
 	const config = useAtomValue(configAtom);
 
 	if (!config) {

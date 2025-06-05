@@ -2,7 +2,7 @@ import { getLogsRequest } from 'api/calls';
 import { atom } from 'jotai';
 import type { ApiLog } from 'types';
 
-export const logsAtom = atom<Array<ApiLog>>([]);
+export const logsAtom = atom<Array<ApiLog> | null>(null);
 
 export const fetchLogsAtom = atom(null, async (_get, set) => {
 	const logs = await getLogsRequest();
@@ -10,6 +10,6 @@ export const fetchLogsAtom = atom(null, async (_get, set) => {
 });
 
 export const addLogAtom = atom(null, (get, set, log: ApiLog) => {
-	const logs = get(logsAtom);
+	const logs = get(logsAtom) ?? [];
 	set(logsAtom, [...logs, log]);
 });

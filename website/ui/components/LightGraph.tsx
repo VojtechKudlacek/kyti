@@ -1,5 +1,5 @@
 import type { ApiRecord } from 'types';
-import { OnOffGraph } from 'ui/primitives/OnOffGraph';
+import { OnOffGraph } from 'ui/components/OnOffGraph';
 
 interface LightGraphProps {
 	records: Array<ApiRecord>;
