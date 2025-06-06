@@ -19,6 +19,7 @@ import { useEffect } from 'react';
 import { fetchConfigAtom } from 'store/config';
 import { fetchLogsAtom } from 'store/logs';
 import { fetchRecordsAtom } from 'store/records';
+import { AdminZone } from 'ui/containers/AdminZone';
 import { Authentication } from 'ui/containers/Authentication';
 import { ConfigCard } from 'ui/containers/ConfigCard';
 import { CurrentStateCard } from 'ui/containers/CurrentStateCard';
@@ -59,8 +60,10 @@ export function App() {
 		<Flex gap="small" vertical>
 			<CurrentStateCard />
 			<GraphsCard />
-			<LogsCard />
-			<ConfigCard />
+			<AdminZone>
+				<LogsCard />
+				<ConfigCard />
+			</AdminZone>
 			<Authentication />
 		</Flex>
 	);
