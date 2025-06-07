@@ -1,1 +1,0 @@
-{"root":["./server/app.ts","./server/config.ts","./server/utils.ts","./server/classes/dhtsensor.ts","./server/classes/outlet.ts","./server/classes/scheduler.ts","./server/classes/soilmoisturesensor.ts","./server/db/actions.ts","./server/db/client.ts","./server/db/log.ts","./server/db/setup.ts","./server/db/types.ts","./server/hw/spi.ts"],"version":"5.8.3"}
