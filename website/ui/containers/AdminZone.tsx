@@ -1,13 +1,21 @@
 import { useAtomValue } from 'jotai';
-import type { PropsWithChildren } from 'react';
 import { secretAtom } from 'store/secret';
+import { Authentication } from './Authentication';
+import { ConfigCard } from './ConfigCard';
+import { LogsCard } from './LogsCard';
 
-export function AdminZone({ children }: PropsWithChildren) {
+export function AdminZone() {
 	const secret = useAtomValue(secretAtom);
 
-	if (!secret) {
-		return null;
-	}
-
-	return children;
+	return (
+		<>
+			{secret && (
+				<>
+					<ConfigCard />
+					<LogsCard />
+				</>
+			)}
+			<Authentication />
+		</>
+	);
 }
