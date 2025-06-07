@@ -1,4 +1,6 @@
 import { Path, request } from 'api/common';
+import { getDefaultStore } from 'jotai';
+import { secretAtom } from 'store/secret';
 import type { ApiConfig, ApiLog, ApiRecord } from 'types';
 
 export async function getRecordsRequest(from: number, to: number): Promise<Array<ApiRecord>> {
@@ -11,4 +13,12 @@ export async function getLogsRequest(): Promise<Array<ApiLog>> {
 
 export async function getConfigRequest(): Promise<ApiConfig> {
 	return await request<ApiConfig>(Path.Config);
+}
+
+export async function setConfigRequest(key: keyof ApiConfig, value: ApiConfig[keyof ApiConfig]): Promise<void> {
+	return await request<void>(Path.ConfigKey, {
+		method: 'POST',
+		params: { key },
+		body: JSON.stringify({ value, secret: getDefaultStore().get(secretAtom) }),
+	});
 }

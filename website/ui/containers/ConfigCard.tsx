@@ -1,10 +1,36 @@
-import { Card } from 'antd';
-import { useAtomValue } from 'jotai';
-import { configAtom } from 'store/config';
-import { ConfigOverview } from 'ui/components/ConfigOverview';
+import { Card, message } from 'antd';
+import { ApiError } from 'api/ApiError';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useCallback, useState } from 'react';
+import { configAtom, updateConfigAtom } from 'store/config';
+import type { ApiConfig } from 'types';
+import { ConfigEditModal } from 'ui/components/ConfigEditModal';
+import { ConfigTable } from 'ui/components/ConfigTable';
 
 export function ConfigCard() {
+	const [messageApi, messageApiContext] = message.useMessage();
 	const config = useAtomValue(configAtom);
+	const updateConfig = useSetAtom(updateConfigAtom);
+	const [editKey, setEditKey] = useState<keyof ApiConfig | null>(null);
+
+	const onChangeHandler = useCallback(
+		async function (key: keyof ApiConfig, value: ApiConfig[keyof ApiConfig]) {
+			try {
+				console.log('updating config', key, value);
+				await updateConfig([key, value]);
+				console.log('config updated', key, value);
+				setEditKey(null);
+			} catch (error) {
+				if (error instanceof ApiError) {
+					messageApi.error(`Failed to update config: ${error.message}`);
+					return;
+				}
+				messageApi.error('Unknown error');
+				setEditKey(null);
+			}
+		},
+		[updateConfig, messageApi],
+	);
 
 	if (!config) {
 		return null;
@@ -12,7 +38,16 @@ export function ConfigCard() {
 
 	return (
 		<Card size="small" title="Config Overview">
-			<ConfigOverview config={config} />
+			<ConfigTable config={config} onEdit={setEditKey} />
+			{editKey && (
+				<ConfigEditModal
+					configKey={editKey}
+					configValue={config[editKey]}
+					onCancel={() => setEditKey(null)}
+					onChange={onChangeHandler}
+				/>
+			)}
+			{messageApiContext}
 		</Card>
 	);
 }

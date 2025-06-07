@@ -22,6 +22,6 @@ export async function configRoutes(fastify: FastifyInstance) {
 			return reply.code(401).send({ error: 'Unauthorized' });
 		}
 		configManager.setValue(key, value);
-		return 'ok';
+		return reply.code(204).send();
 	});
 }

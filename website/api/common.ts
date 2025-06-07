@@ -1,7 +1,10 @@
+import { ApiError } from './ApiError';
+
 export const Path = {
 	Records: '/records',
 	Logs: '/logs',
 	Config: '/config',
+	ConfigKey: '/config/:key',
 } as const;
 
 type PathType = (typeof Path)[keyof typeof Path];
@@ -30,7 +33,16 @@ export async function request<T = unknown>(path: PathType, options: RequestOptio
 	const response = await fetch(url, {
 		method: options.method ?? 'GET',
 		body: options.body,
+		headers: {
+			'Content-Type': 'application/json',
+		},
 	});
+	if (response.status === 204) {
+		return null as T;
+	}
 	const result = await response.json();
+	if (!response.ok) {
+		throw new ApiError(result.error, response.status);
+	}
 	return result;
 }

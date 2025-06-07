@@ -18,6 +18,6 @@ export async function climateRoutes(fastify: FastifyInstance) {
 			return reply.code(401).send({ error: 'Unauthorized' });
 		}
 		climateObserver.updateClimateMeasurements(toFixedTenth(temperature), toFixedTenth(humidity));
-		return 'ok';
+		return reply.code(204).send();
 	});
 }

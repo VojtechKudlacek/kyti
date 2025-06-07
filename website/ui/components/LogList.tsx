@@ -1,9 +1,16 @@
-import { Table, Tag } from 'antd';
+import { Table, type TableColumnsType, Tag } from 'antd';
 import { format } from 'date-fns';
 import { useMemo } from 'react';
 import type { ApiLog } from 'types';
 
-const columnsDefinition = [
+type TableColumnDefinition = TableColumnsType<{
+	key: string;
+	message: string;
+	type: string;
+	time: string;
+}>;
+
+const columnsDefinition: TableColumnDefinition = [
 	{
 		title: 'Message',
 		dataIndex: 'message',
@@ -38,5 +45,5 @@ export function LogList({ logs }: LogListProps) {
 		}));
 	}, [logs]);
 
-	return <Table dataSource={dataSource} columns={columnsDefinition} />;
+	return <Table size="small" dataSource={dataSource} columns={columnsDefinition} />;
 }

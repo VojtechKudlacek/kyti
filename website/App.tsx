@@ -61,8 +61,8 @@ export function App() {
 			<CurrentStateCard />
 			<GraphsCard />
 			<AdminZone>
-				<LogsCard />
 				<ConfigCard />
+				<LogsCard />
 			</AdminZone>
 			<Authentication />
 		</Flex>
