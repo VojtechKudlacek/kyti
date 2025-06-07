@@ -16,9 +16,8 @@ export function ConfigCard() {
 	const onChangeHandler = useCallback(
 		async function (key: keyof ApiConfig, value: ApiConfig[keyof ApiConfig]) {
 			try {
-				console.log('updating config', key, value);
 				await updateConfig([key, value]);
-				console.log('config updated', key, value);
+				messageApi.success('Config updated');
 				setEditKey(null);
 			} catch (error) {
 				if (error instanceof ApiError) {
