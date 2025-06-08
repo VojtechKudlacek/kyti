@@ -97,9 +97,9 @@ export const defaultDbConfigValues: DbConfig = {
 	[dbConfigVariable.logLifespan]: 72,
 	[dbConfigVariable.recordLifespan]: 72,
 
-	[dbConfigVariable.lightTurnOnTime]: '7:00',
+	[dbConfigVariable.lightTurnOnTime]: '07:00',
 	[dbConfigVariable.lightTurnOffTime]: '23:00',
-	[dbConfigVariable.fanTurnOnTime]: '7:10',
+	[dbConfigVariable.fanTurnOnTime]: '07:10',
 	[dbConfigVariable.fanTurnOffTime]: '23:10',
 };
 

@@ -6,6 +6,7 @@ import { fetchLogsAtom } from 'store/logs';
 import { fetchRecordsAtom } from 'store/records';
 import { CurrentStateCard } from 'ui/containers/CurrentStateCard';
 import { GraphsCard } from 'ui/containers/GraphsCard';
+import { MessageProvider } from 'ui/containers/MessageProvider';
 
 const AdminZone = lazy(() => import('ui/containers/AdminZone').then((module) => ({ default: module.AdminZone })));
 
@@ -21,10 +22,12 @@ export function App() {
 	}, [fetchRecords, fetchLogs, fetchConfig]);
 
 	return (
-		<Flex gap="small" vertical>
-			<CurrentStateCard />
-			<GraphsCard />
-			<AdminZone />
-		</Flex>
+		<MessageProvider>
+			<Flex gap="small" vertical>
+				<CurrentStateCard />
+				<GraphsCard />
+				<AdminZone />
+			</Flex>
+		</MessageProvider>
 	);
 }

@@ -17,16 +17,14 @@ export interface ApiLog {
 export interface ApiConfig {
 	TEMPERATURE_MIN: number;
 	TEMPERATURE_MAX: number;
-	TEMPERATURE_SUFFICIENT: number;
 
 	HUMIDITY_MIN: number;
 	HUMIDITY_MAX: number;
-	HUMIDITY_SUFFICIENT: number;
 
-	OUTLET_SLOT_LIGHT: 1 | 2 | 3 | 4;
-	OUTLET_SLOT_VENTILATOR: 1 | 2 | 3 | 4;
-	OUTLET_SLOT_FAN: 1 | 2 | 3 | 4;
-	OUTLET_SLOT_HUMIDIFIER: 1 | 2 | 3 | 4;
+	OUTLET_SLOT_LIGHT: number;
+	OUTLET_SLOT_VENTILATOR: number;
+	OUTLET_SLOT_FAN: number;
+	OUTLET_SLOT_HUMIDIFIER: number;
 
 	TASK_CLIMATE_CONTROL: boolean;
 	TASK_CLIMATE_LOG: boolean;
@@ -41,8 +39,8 @@ export interface ApiConfig {
 	LOG_LIFESPAN: number;
 	RECORD_LIFESPAN: number;
 
-	LIGHT_TURN_ON_TIME: `${string}:${string}`;
-	LIGHT_TURN_OFF_TIME: `${string}:${string}`;
-	FAN_TURN_ON_TIME: `${string}:${string}`;
-	FAN_TURN_OFF_TIME: `${string}:${string}`;
+	LIGHT_TURN_ON_TIME: string;
+	LIGHT_TURN_OFF_TIME: string;
+	FAN_TURN_ON_TIME: string;
+	FAN_TURN_OFF_TIME: string;
 }

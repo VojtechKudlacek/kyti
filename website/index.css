@@ -5,3 +5,8 @@ body {
 	background-color: #f0f7ff;
 	padding: 8px;
 }
+
+.scrollable-modal .ant-modal-content {
+	max-height: 700px;
+	overflow-y: auto;
+}
