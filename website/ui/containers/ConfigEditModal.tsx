@@ -114,7 +114,17 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 					initialValue={[config.TEMPERATURE_MIN, config.TEMPERATURE_MAX]}
 					rules={[{ required: true, message: 'Please select a temperature range!' }]}
 				>
-					<Slider range min={20} max={30} marks={{ 20: '20°C', 30: '30°C' }} />
+					<Slider
+						range
+						min={20}
+						max={30}
+						marks={{
+							[config.TEMPERATURE_MIN]: `${config.TEMPERATURE_MIN}`,
+							[config.TEMPERATURE_MAX]: `${config.TEMPERATURE_MAX}`,
+							20: '20°C',
+							30: '30°C',
+						}}
+					/>
 				</Form.Item>
 
 				<Form.Item<FormValues>
@@ -123,7 +133,17 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 					initialValue={[config.HUMIDITY_MIN, config.HUMIDITY_MAX]}
 					rules={[{ required: true, message: 'Please select a humidity range!' }]}
 				>
-					<Slider range min={30} max={80} marks={{ 30: '30%', 80: '80%' }} />
+					<Slider
+						range
+						min={30}
+						max={80}
+						marks={{
+							[config.HUMIDITY_MIN]: `${config.HUMIDITY_MIN}`,
+							[config.HUMIDITY_MAX]: `${config.HUMIDITY_MAX}`,
+							30: '30%',
+							80: '80%',
+						}}
+					/>
 				</Form.Item>
 
 				<Form.Item<FormValues>
@@ -224,7 +244,17 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 					initialValue={[config.GRAPH_TEMPERATURE_MIN, config.GRAPH_TEMPERATURE_MAX]}
 					rules={[{ required: true, message: 'Please select a graph temperature range!' }]}
 				>
-					<Slider range min={20} max={30} marks={{ 20: '20°C', 30: '30°C' }} />
+					<Slider
+						range
+						min={20}
+						max={30}
+						marks={{
+							[config.GRAPH_TEMPERATURE_MIN]: `${config.GRAPH_TEMPERATURE_MIN}`,
+							[config.GRAPH_TEMPERATURE_MAX]: `${config.GRAPH_TEMPERATURE_MAX}`,
+							20: '20°C',
+							30: '30°C',
+						}}
+					/>
 				</Form.Item>
 
 				<Form.Item<FormValues>
@@ -233,7 +263,17 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 					initialValue={[config.GRAPH_HUMIDITY_MIN, config.GRAPH_HUMIDITY_MAX]}
 					rules={[{ required: true, message: 'Please select a graph humidity range!' }]}
 				>
-					<Slider range min={30} max={80} marks={{ 30: '30%', 80: '80%' }} />
+					<Slider
+						range
+						min={30}
+						max={80}
+						marks={{
+							[config.GRAPH_HUMIDITY_MIN]: `${config.GRAPH_HUMIDITY_MIN}`,
+							[config.GRAPH_HUMIDITY_MAX]: `${config.GRAPH_HUMIDITY_MAX}`,
+							30: '30%',
+							80: '80%',
+						}}
+					/>
 				</Form.Item>
 
 				<Form.Item<FormValues>
