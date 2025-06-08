@@ -1,5 +1,6 @@
 import '@ant-design/v5-patch-for-react-19';
 import './index.css';
+import 'api/socket';
 
 import {
 	BarElement,

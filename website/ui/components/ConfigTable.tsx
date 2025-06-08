@@ -6,7 +6,7 @@ import type { ApiConfig } from 'types';
 type TableColumnDefinition = TableColumnsType<{
 	key: string;
 	configKey: keyof ApiConfig;
-	configValue: number | boolean;
+	configValue: number | boolean | string;
 }>;
 
 interface ConfigOverviewProps {

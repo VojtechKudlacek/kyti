@@ -1,5 +1,5 @@
 import { Path, request } from 'api/common';
-import { getDefaultStore } from 'jotai';
+import { jotaiStore } from 'store';
 import { secretAtom } from 'store/secret';
 import type { ApiConfig, ApiLog, ApiRecord } from 'types';
 
@@ -19,6 +19,6 @@ export async function setConfigRequest(key: keyof ApiConfig, value: ApiConfig[ke
 	return await request<void>(Path.ConfigKey, {
 		method: 'POST',
 		params: { key },
-		body: JSON.stringify({ value, secret: getDefaultStore().get(secretAtom) }),
+		body: JSON.stringify({ value, secret: jotaiStore.get(secretAtom) }),
 	});
 }

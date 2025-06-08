@@ -1,5 +1,4 @@
 import { Flex } from 'antd';
-import { socket } from 'api/socket';
 import { useSetAtom } from 'jotai';
 import { lazy, useEffect } from 'react';
 import { fetchConfigAtom } from 'store/config';
@@ -14,10 +13,6 @@ export function App() {
 	const fetchRecords = useSetAtom(fetchRecordsAtom);
 	const fetchLogs = useSetAtom(fetchLogsAtom);
 	const fetchConfig = useSetAtom(fetchConfigAtom);
-
-	useEffect(() => {
-		console.log(socket.id);
-	}, []);
 
 	useEffect(() => {
 		fetchRecords();

@@ -1,11 +1,9 @@
-import { getDefaultStore } from 'jotai';
 import { io } from 'socket.io-client';
+import { jotaiStore } from 'store';
 import { addLogAtom } from 'store/logs';
 import { addRecordAtom } from 'store/records';
 import type { ApiLog, ApiRecord } from 'types';
 import { baseUrl } from './common';
-
-const jotaiStore = getDefaultStore();
 
 export const socket = io(baseUrl);
 
