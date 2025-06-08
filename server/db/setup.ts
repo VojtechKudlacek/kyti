@@ -1,4 +1,4 @@
-import { dbConfigVariables } from '../classes/ConfigManager';
+import { dbConfigVariables, defaultDbConfigValues } from '../classes/ConfigManager';
 import { databaseClient } from '../instances';
 
 export function setupDatabase(): void {
@@ -35,6 +35,6 @@ export function setupDatabase(): void {
 	// Insert ConfigManager.Variables into config table if they don't exist
 	const stmt = databaseClient.db.prepare('INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)');
 	for (const variable of dbConfigVariables) {
-		stmt.run(variable, 'null');
+		stmt.run(variable, JSON.stringify(defaultDbConfigValues[variable]));
 	}
 }

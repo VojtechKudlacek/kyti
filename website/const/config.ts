@@ -22,4 +22,13 @@ export const configKeyTexts: Record<keyof ApiConfig, string> = {
 	TASK_CLIMATE_CONTROL: 'Climate Control Task',
 	TASK_CLIMATE_LOG: 'Climate Log Task',
 	TASK_LOG_BROOM: 'Log Broom Task',
+	TASK_SWITCH_DEVICES: 'Turn Devices On/Off Task',
+
+	LOG_LIFESPAN: 'Log Lifespan',
+	RECORD_LIFESPAN: 'Record Lifespan',
+
+	LIGHT_TURN_ON_TIME: 'Light Turn On Time',
+	LIGHT_TURN_OFF_TIME: 'Light Turn Off Time',
+	FAN_TURN_ON_TIME: 'Fan Turn On Time',
+	FAN_TURN_OFF_TIME: 'Fan Turn Off Time',
 };

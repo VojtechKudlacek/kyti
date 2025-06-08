@@ -20,13 +20,6 @@ export async function controlClimate() {
 	const humidityMin = configManager.getValue(dbConfigVariable.humidityMin);
 	const humiditySufficient = configManager.getValue(dbConfigVariable.humiditySufficient);
 
-	assert(temperatureMax !== null, 'Temperature max is not set');
-	assert(temperatureMin !== null, 'Temperature min is not set');
-	assert(temperatureSufficient !== null, 'Temperature sufficient is not set');
-	assert(humidityMax !== null, 'Humidity max is not set');
-	assert(humidityMin !== null, 'Humidity min is not set');
-	assert(humiditySufficient !== null, 'Humidity sufficient is not set');
-
 	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
 	// Turn ventilator on if temperature is too high

@@ -9,7 +9,7 @@ import { envConfigVariable } from './classes/EnvManager';
 import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
 import { configManager, databaseClient, envManager, fastify, outlet, scheduler, socketManager } from './instances';
-import { broomRecords, collectRecords, controlClimate } from './tasks';
+import { broomRecords, collectRecords, controlClimate, switchDevices } from './tasks';
 import { refreshOutletState } from './tasks/refreshOutletState';
 import { terminate } from './terminate';
 import { stringifyError } from './utils';
@@ -55,6 +55,7 @@ export async function run() {
 		scheduler.addTask('Outlet State Refresher', 1, refreshOutletState);
 		scheduler.addTask('Climate Controller', 1, controlClimate);
 		scheduler.addTask('Records Collector', 1, collectRecords);
+		scheduler.addTask('Device Switcher', 1, switchDevices);
 		scheduler.addTask('Records Broomer', 60, broomRecords);
 		scheduler.start();
 

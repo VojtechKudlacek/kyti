@@ -4,7 +4,8 @@ import type { RecordEntity } from '../db/types';
 import { climateObserver, configManager, outlet, socketManager } from '../instances';
 
 export function collectRecords(timestamp: number) {
-	if (!configManager.getValue(dbConfigVariable.taskClimateLog)) {
+	const isEnabled = configManager.getValue(dbConfigVariable.taskClimateLog);
+	if (!isEnabled) {
 		return;
 	}
 
