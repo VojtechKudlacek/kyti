@@ -2,11 +2,9 @@ import type { ApiConfig } from 'types';
 
 export const configKeyTexts: Record<keyof ApiConfig, string> = {
 	TEMPERATURE_MAX: 'Maximal Temperature',
-	TEMPERATURE_SUFFICIENT: 'Sufficient Temperature',
 	TEMPERATURE_MIN: 'Minimal Temperature',
 
 	HUMIDITY_MAX: 'Maximal Humidity',
-	HUMIDITY_SUFFICIENT: 'Sufficient Humidity',
 	HUMIDITY_MIN: 'Minimal Humidity',
 
 	GRAPH_TEMPERATURE_MIN: 'Minimal Temperature Graph',
