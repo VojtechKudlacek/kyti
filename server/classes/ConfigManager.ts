@@ -7,11 +7,9 @@ type DbConfig = Record<ConfigVariable, ConfigVariableTypeMap[ConfigVariable]>;
 type ConfigVariableTypeMap = {
 	[dbConfigVariable.temperatureMin]: number;
 	[dbConfigVariable.temperatureMax]: number;
-	[dbConfigVariable.temperatureSufficient]: number;
 
 	[dbConfigVariable.humidityMin]: number;
 	[dbConfigVariable.humidityMax]: number;
-	[dbConfigVariable.humiditySufficient]: number;
 
 	[dbConfigVariable.outletSlotLight]: 1 | 2 | 3 | 4;
 	[dbConfigVariable.outletSlotVentilator]: 1 | 2 | 3 | 4;
@@ -40,11 +38,9 @@ type ConfigVariableTypeMap = {
 export const dbConfigVariable = {
 	temperatureMin: 'TEMPERATURE_MIN',
 	temperatureMax: 'TEMPERATURE_MAX',
-	temperatureSufficient: 'TEMPERATURE_SUFFICIENT',
 
 	humidityMin: 'HUMIDITY_MIN',
 	humidityMax: 'HUMIDITY_MAX',
-	humiditySufficient: 'HUMIDITY_SUFFICIENT',
 
 	outletSlotLight: 'OUTLET_SLOT_LIGHT',
 	outletSlotVentilator: 'OUTLET_SLOT_VENTILATOR',
@@ -73,11 +69,9 @@ export const dbConfigVariable = {
 export const defaultDbConfigValues: DbConfig = {
 	[dbConfigVariable.temperatureMin]: 20,
 	[dbConfigVariable.temperatureMax]: 30,
-	[dbConfigVariable.temperatureSufficient]: 25,
 
 	[dbConfigVariable.humidityMin]: 40,
 	[dbConfigVariable.humidityMax]: 60,
-	[dbConfigVariable.humiditySufficient]: 50,
 
 	[dbConfigVariable.outletSlotLight]: 1,
 	[dbConfigVariable.outletSlotVentilator]: 2,

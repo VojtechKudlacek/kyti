@@ -13,12 +13,12 @@ export async function controlClimate() {
 	assert(temperature !== null, 'Temperature is outdated for climate control');
 	assert(humidity !== null, 'Humidity is outdated for climate control');
 
-	const temperatureMax = configManager.getValue(dbConfigVariable.temperatureMax);
 	const temperatureMin = configManager.getValue(dbConfigVariable.temperatureMin);
-	const temperatureSufficient = configManager.getValue(dbConfigVariable.temperatureSufficient);
-	const humidityMax = configManager.getValue(dbConfigVariable.humidityMax);
+	const temperatureMax = configManager.getValue(dbConfigVariable.temperatureMax);
+	const temperatureSufficient = (temperatureMin + temperatureMax) / 2;
 	const humidityMin = configManager.getValue(dbConfigVariable.humidityMin);
-	const humiditySufficient = configManager.getValue(dbConfigVariable.humiditySufficient);
+	const humidityMax = configManager.getValue(dbConfigVariable.humidityMax);
+	const humiditySufficient = (humidityMin + humidityMax) / 2;
 
 	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
