@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 import { jotaiStore } from 'store';
-import { addLogAtom } from 'store/logs';
+import { configAtom } from 'store/config';
+import { addLogAtom, fetchLogsAtom } from 'store/logs';
 import { addRecordAtom } from 'store/records';
 import type { ApiLog, ApiRecord } from 'types';
 import { baseUrl } from './common';
@@ -25,4 +26,16 @@ socket.on('newRecord', (record: ApiRecord) => {
 
 socket.on('newLog', (log: ApiLog) => {
 	jotaiStore.set(addLogAtom, log);
+});
+
+socket.on('logsChange', () => {
+	jotaiStore.set(fetchLogsAtom);
+});
+
+socket.on('configChange', (key: string, value: unknown) => {
+	const currentConfig = jotaiStore.get(configAtom);
+	if (!currentConfig) {
+		return;
+	}
+	jotaiStore.set(configAtom, { ...currentConfig, [key]: value });
 });
