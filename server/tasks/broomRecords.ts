@@ -1,7 +1,8 @@
 import { subHours } from 'date-fns';
 import { dbConfigVariable } from '../classes/ConfigManager';
 import { deleteLogsOlderThan, deleteRecordsOlderThan } from '../db/actions';
-import { configManager } from '../instances';
+import { LogType, log } from '../db/log';
+import { configManager, socketManager } from '../instances';
 
 export function broomRecords() {
 	const isEnabled = configManager.getValue(dbConfigVariable.taskLogBroom);
@@ -15,6 +16,15 @@ export function broomRecords() {
 	const recordsToDeleteTimestamp = subHours(new Date(), recordLifespan).getTime();
 	const logsToDeleteTimestamp = subHours(new Date(), logLifespan).getTime();
 
-	deleteRecordsOlderThan(recordsToDeleteTimestamp);
-	deleteLogsOlderThan(logsToDeleteTimestamp);
+	const recordsDeleted = deleteRecordsOlderThan(recordsToDeleteTimestamp);
+	const logsDeleted = deleteLogsOlderThan(logsToDeleteTimestamp);
+
+	if (recordsDeleted > 0) {
+		log(`Deleted ${recordsDeleted} records`, LogType.Info, false);
+	}
+
+	if (logsDeleted > 0) {
+		log(`Deleted ${logsDeleted} logs`, LogType.Info, false);
+		socketManager.emitLogsChange();
+	}
 }

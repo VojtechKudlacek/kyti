@@ -29,4 +29,8 @@ export class SocketManager {
 	public emitNewLog(log: LogEntity) {
 		this.io?.emit('newLog', log);
 	}
+
+	public emitLogsChange() {
+		this.io?.emit('logsChange');
+	}
 }
