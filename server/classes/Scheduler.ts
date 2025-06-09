@@ -67,10 +67,10 @@ export class Scheduler {
 				if (nowSeconds >= task.nextRunSeconds) {
 					task.nextRunSeconds += task.intervalSeconds;
 					try {
-						log(`Executing task <${task.name}>`, LogType.Info, false);
+						log(`Executing task "${task.name}"`, LogType.Info, false);
 						await task.fn(nowMilliseconds);
 					} catch (error) {
-						log(`Error executing task <${task.name}>: ${stringifyError(error)}`, LogType.Error);
+						log(`Error executing task "${task.name}": ${stringifyError(error)}`, LogType.Error);
 					}
 				}
 			}
