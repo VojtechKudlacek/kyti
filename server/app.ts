@@ -52,11 +52,11 @@ export async function run() {
 		await new Promise<void>((resolve) => fastify.server.listen(3000, resolve));
 
 		// Scheduler
-		scheduler.addTask('Outlet State Refresher', 1, refreshOutletState);
-		scheduler.addTask('Climate Controller', 1, controlClimate);
-		scheduler.addTask('Records Collector', 1, collectRecords);
-		scheduler.addTask('Device Switcher', 1, switchDevices);
-		scheduler.addTask('Records Broomer', 60, broomRecords);
+		scheduler.addTask('Outlet State Refresher', 30, refreshOutletState);
+		scheduler.addTask('Climate Controller', 30, controlClimate);
+		scheduler.addTask('Records Collector', 60, collectRecords);
+		scheduler.addTask('Device Switcher', 60, switchDevices);
+		scheduler.addTask('Records Broomer', 60 * 15, broomRecords);
 		scheduler.start();
 
 		// Termination handlers
