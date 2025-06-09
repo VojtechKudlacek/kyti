@@ -1,5 +1,5 @@
 import { getConfigRequest, setConfigRequest } from 'api/calls';
-import { type Getter, type Setter, atom } from 'jotai';
+import { atom } from 'jotai';
 import type { ApiConfig } from 'types';
 
 export const configAtom = atom<ApiConfig | null>(null);
@@ -9,14 +9,21 @@ export const fetchConfigAtom = atom(null, async (_get, set) => {
 	set(configAtom, config);
 });
 
-export const updateConfigAtom = atom(
+export const changeConfigValueAtom = atom(
 	null,
-	async <T extends keyof ApiConfig>(get: Getter, set: Setter, [key, value]: [T, ApiConfig[T]]) => {
+	(get, set, [key, value]: [keyof ApiConfig, ApiConfig[keyof ApiConfig]]) => {
 		const config = get(configAtom);
 		if (!config) {
 			return;
 		}
-		await setConfigRequest(key, value);
 		set(configAtom, { ...config, [key]: value });
+	},
+);
+
+export const updateConfigAtom = atom(
+	null,
+	async (_get, set, [key, value]: [keyof ApiConfig, ApiConfig[keyof ApiConfig]]) => {
+		await setConfigRequest(key, value);
+		set(changeConfigValueAtom, [key, value]);
 	},
 );

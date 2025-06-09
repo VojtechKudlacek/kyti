@@ -1,9 +1,9 @@
 import { io } from 'socket.io-client';
 import { jotaiStore } from 'store';
-import { configAtom } from 'store/config';
+import { changeConfigValueAtom, configAtom } from 'store/config';
 import { addLogAtom, fetchLogsAtom } from 'store/logs';
 import { addRecordAtom } from 'store/records';
-import type { ApiLog, ApiRecord } from 'types';
+import type { ApiConfig, ApiLog, ApiRecord } from 'types';
 import { baseUrl } from './common';
 
 export const socket = io(baseUrl);
@@ -25,17 +25,25 @@ socket.on('newRecord', (record: ApiRecord) => {
 });
 
 socket.on('newLog', (log: ApiLog) => {
+	console.log('newLog', log);
 	jotaiStore.set(addLogAtom, log);
 });
 
 socket.on('logsChange', () => {
+	console.log('logsChange');
 	jotaiStore.set(fetchLogsAtom);
 });
 
-socket.on('configChange', (key: string, value: unknown) => {
+interface ConfigChangeEvent {
+	key: keyof ApiConfig;
+	value: ApiConfig[keyof ApiConfig];
+}
+
+socket.on('configChange', ({ key, value }: ConfigChangeEvent) => {
+	console.log('configChange', key, value);
 	const currentConfig = jotaiStore.get(configAtom);
 	if (!currentConfig) {
 		return;
 	}
-	jotaiStore.set(configAtom, { ...currentConfig, [key]: value });
+	jotaiStore.set(changeConfigValueAtom, [key, value]);
 });

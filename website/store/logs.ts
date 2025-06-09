@@ -11,5 +11,5 @@ export const fetchLogsAtom = atom(null, async (_get, set) => {
 
 export const addLogAtom = atom(null, (get, set, log: ApiLog) => {
 	const logs = get(logsAtom) ?? [];
-	set(logsAtom, [...logs, log]);
+	set(logsAtom, [log, ...logs]);
 });
