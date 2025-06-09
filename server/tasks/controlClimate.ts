@@ -31,7 +31,7 @@ export async function controlClimate() {
 		newVentilatorState = false;
 	}
 	// Turn ventilator on if humidity is too high, but only if temperature is within range
-	if (humidity > humidityMax && temperature > temperatureMin) {
+	if (humidity > humidityMax && temperature >= temperatureSufficient) {
 		newVentilatorState = true;
 	}
 
