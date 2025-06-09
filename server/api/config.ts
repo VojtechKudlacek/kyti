@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { envConfigVariable } from '../classes/EnvManager';
-import { configManager, envManager } from '../instances';
+import { configManager, envManager, socketManager } from '../instances';
 
 interface PostBody {
 	value: number | boolean;
@@ -22,6 +22,7 @@ export async function configRoutes(fastify: FastifyInstance) {
 			return reply.code(401).send({ error: 'Unauthorized' });
 		}
 		configManager.setValue(key, value);
+		socketManager.emitConfigChange(key, value);
 		return reply.code(204).send();
 	});
 }

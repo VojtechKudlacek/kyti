@@ -33,4 +33,8 @@ export class SocketManager {
 	public emitLogsChange() {
 		this.io?.emit('logsChange');
 	}
+
+	public emitConfigChange(key: string, value: unknown) {
+		this.io?.emit('configChange', { key, value });
+	}
 }
