@@ -25,12 +25,10 @@ socket.on('newRecord', (record: ApiRecord) => {
 });
 
 socket.on('newLog', (log: ApiLog) => {
-	console.log('newLog', log);
 	jotaiStore.set(addLogAtom, log);
 });
 
 socket.on('logsChange', () => {
-	console.log('logsChange');
 	jotaiStore.set(fetchLogsAtom);
 });
 
@@ -40,7 +38,6 @@ interface ConfigChangeEvent {
 }
 
 socket.on('configChange', ({ key, value }: ConfigChangeEvent) => {
-	console.log('configChange', key, value);
 	const currentConfig = jotaiStore.get(configAtom);
 	if (!currentConfig) {
 		return;

@@ -3,15 +3,13 @@ import type { LogEntity, RecordEntity } from '../db/types';
 
 export class SocketManager {
 	private io: Server | null = null;
+	private clients: Map<string, Socket> = new Map();
 
 	private register(socket: Socket) {
-		socket.on('message', (_data) => {
-			// console.log('Received message:', data);
-			// socket.emit('message', 'Hello from server');
-		});
+		this.clients.set(socket.id, socket);
 
 		socket.on('disconnect', () => {
-			// console.log('Client disconnected:', socket.id);
+			this.clients.delete(socket.id);
 		});
 	}
 
