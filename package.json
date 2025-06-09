@@ -17,7 +17,7 @@
 		"website:preview": "vite preview",
 		"db:purge": "rm kyti.db",
 		"db:config": "node scripts/config.ts",
-		"deploy": "pnpm server:deploy && pnpm website:build"
+		"all:deploy": "pnpm server:deploy && pnpm website:build"
 	},
 	"author": "Vojtech Kudlacek",
 	"license": "MIT",
