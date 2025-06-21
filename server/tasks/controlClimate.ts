@@ -40,11 +40,6 @@ export async function controlClimate() {
 		newFanState = true;
 	}
 
-	if (newFanState !== fanIsOn) {
-		await outlet.setState(outlet.slot.Fan, newFanState);
-		log(`Fan: ${newFanState ? 'on' : 'off'}`, LogType.Info, false);
-	}
-
 	const { temperature, humidity } = climateObserver.getCurrentClimateData();
 
 	assert(temperature !== null, 'Temperature is outdated for climate control');
@@ -76,11 +71,6 @@ export async function controlClimate() {
 		newVentilatorState = true;
 	}
 
-	if (newVentilatorState !== ventilatorIsOn) {
-		await outlet.setState(outlet.slot.Ventilator, newVentilatorState);
-		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`, LogType.Info, false);
-	}
-
 	const humidifierIsOn = outlet.isEnabled(outlet.slot.Humidifier);
 	let newHumidifierState = humidifierIsOn;
 	// Turn humidifier on if humidity is too low
@@ -90,6 +80,20 @@ export async function controlClimate() {
 	// Turn humidifier off if it's on and humidity is within range
 	if (humidity >= humiditySufficient) {
 		newHumidifierState = false;
+	}
+
+	if (newHumidifierState) {
+		newFanState = true;
+	}
+
+	if (newFanState !== fanIsOn) {
+		await outlet.setState(outlet.slot.Fan, newFanState);
+		log(`Fan: ${newFanState ? 'on' : 'off'}`, LogType.Info, false);
+	}
+
+	if (newVentilatorState !== ventilatorIsOn) {
+		await outlet.setState(outlet.slot.Ventilator, newVentilatorState);
+		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`, LogType.Info, false);
 	}
 
 	if (newHumidifierState !== humidifierIsOn) {
