@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import dayjs from 'dayjs';
+import { parse } from 'date-fns';
 import { dbConfigVariable } from '../classes/ConfigManager';
 import { LogType, log } from '../db/log';
 import { climateObserver, configManager, outlet } from '../instances';
@@ -13,8 +13,16 @@ export async function controlClimate() {
 
 	const lightIsOn = outlet.isEnabled(outlet.slot.Light);
 	let newLightState = lightIsOn;
-	const lightTurnOffTime = dayjs(configManager.getValue(dbConfigVariable.lightTurnOffTime), 'HH:mm').valueOf();
-	const lightTurnOnTime = dayjs(configManager.getValue(dbConfigVariable.lightTurnOnTime), 'HH:mm').valueOf();
+	const lightTurnOffTime = parse(
+		configManager.getValue(dbConfigVariable.lightTurnOffTime),
+		'HH:mm',
+		new Date(),
+	).getTime();
+	const lightTurnOnTime = parse(
+		configManager.getValue(dbConfigVariable.lightTurnOnTime),
+		'HH:mm',
+		new Date(),
+	).getTime();
 	if (lightIsOn) {
 		if (currentTime >= lightTurnOffTime || currentTime < lightTurnOnTime) {
 			newLightState = false;
@@ -30,8 +38,8 @@ export async function controlClimate() {
 
 	const fanIsOn = outlet.isEnabled(outlet.slot.Fan);
 	let newFanState = fanIsOn;
-	const fanTurnOffTime = dayjs(configManager.getValue(dbConfigVariable.fanTurnOffTime), 'HH:mm').valueOf();
-	const fanTurnOnTime = dayjs(configManager.getValue(dbConfigVariable.fanTurnOnTime), 'HH:mm').valueOf();
+	const fanTurnOffTime = parse(configManager.getValue(dbConfigVariable.fanTurnOffTime), 'HH:mm', new Date()).getTime();
+	const fanTurnOnTime = parse(configManager.getValue(dbConfigVariable.fanTurnOnTime), 'HH:mm', new Date()).getTime();
 	if (fanIsOn) {
 		if (currentTime >= fanTurnOffTime || currentTime < fanTurnOnTime) {
 			newFanState = false;
