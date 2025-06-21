@@ -20,8 +20,13 @@ export async function controlClimate() {
 	const humidityMax = configManager.getValue(dbConfigVariable.humidityMax);
 	const humiditySufficient = (humidityMin + humidityMax) / 2;
 
+	const lightIsOn = outlet.isEnabled(outlet.slot.Light);
 	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
+	// Turn ventilator off if light is off and temperature is too high (at night)
+	if (!lightIsOn && temperature < temperatureMax) {
+		newVentilatorState = false;
+	}
 	// Turn ventilator on if temperature is too high
 	if (temperature > temperatureMax) {
 		newVentilatorState = true;

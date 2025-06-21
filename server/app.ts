@@ -53,9 +53,9 @@ export async function run() {
 
 		// Scheduler
 		scheduler.addTask('Outlet State Refresher', 30, refreshOutletState);
+		scheduler.addTask('Device Switcher', 60, switchDevices);
 		scheduler.addTask('Climate Controller', 30, controlClimate);
 		scheduler.addTask('Records Collector', 60, collectRecords);
-		scheduler.addTask('Device Switcher', 60, switchDevices);
 		scheduler.addTask('Records Broomer', 60 * 15, broomRecords);
 		scheduler.start();
 
