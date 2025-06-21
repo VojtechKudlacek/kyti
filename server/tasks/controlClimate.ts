@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import dayjs from 'dayjs';
 import { dbConfigVariable } from '../classes/ConfigManager';
 import { LogType, log } from '../db/log';
 import { climateObserver, configManager, outlet } from '../instances';
@@ -6,6 +7,42 @@ import { climateObserver, configManager, outlet } from '../instances';
 export async function controlClimate() {
 	if (!configManager.getValue(dbConfigVariable.taskClimateControl)) {
 		return;
+	}
+
+	const currentTime = Date.now();
+
+	const lightIsOn = outlet.isEnabled(outlet.slot.Light);
+	let newLightState = lightIsOn;
+	const lightTurnOffTime = dayjs(configManager.getValue(dbConfigVariable.lightTurnOffTime), 'HH:mm').valueOf();
+	const lightTurnOnTime = dayjs(configManager.getValue(dbConfigVariable.lightTurnOnTime), 'HH:mm').valueOf();
+	if (lightIsOn) {
+		if (currentTime >= lightTurnOffTime || currentTime < lightTurnOnTime) {
+			newLightState = false;
+		}
+	} else if (currentTime >= lightTurnOnTime && currentTime < lightTurnOffTime) {
+		newLightState = true;
+	}
+
+	if (newLightState !== lightIsOn) {
+		await outlet.setState(outlet.slot.Light, newLightState);
+		log(`Light: ${newLightState ? 'on' : 'off'}`, LogType.Info, false);
+	}
+
+	const fanIsOn = outlet.isEnabled(outlet.slot.Fan);
+	let newFanState = fanIsOn;
+	const fanTurnOffTime = dayjs(configManager.getValue(dbConfigVariable.fanTurnOffTime), 'HH:mm').valueOf();
+	const fanTurnOnTime = dayjs(configManager.getValue(dbConfigVariable.fanTurnOnTime), 'HH:mm').valueOf();
+	if (fanIsOn) {
+		if (currentTime >= fanTurnOffTime || currentTime < fanTurnOnTime) {
+			newFanState = false;
+		}
+	} else if (currentTime >= fanTurnOnTime && currentTime < fanTurnOffTime) {
+		newFanState = true;
+	}
+
+	if (newFanState !== fanIsOn) {
+		await outlet.setState(outlet.slot.Fan, newFanState);
+		log(`Fan: ${newFanState ? 'on' : 'off'}`, LogType.Info, false);
 	}
 
 	const { temperature, humidity } = climateObserver.getCurrentClimateData();
@@ -20,11 +57,10 @@ export async function controlClimate() {
 	const humidityMax = configManager.getValue(dbConfigVariable.humidityMax);
 	const humiditySufficient = (humidityMin + humidityMax) / 2;
 
-	const lightIsOn = outlet.isEnabled(outlet.slot.Light);
 	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
 	let newVentilatorState = ventilatorIsOn;
 	// Turn ventilator off if light is off and temperature is too high (at night)
-	if (!lightIsOn && temperature < temperatureMax) {
+	if (!newLightState && temperature < temperatureMax) {
 		newVentilatorState = false;
 	}
 	// Turn ventilator on if temperature is too high
@@ -40,6 +76,11 @@ export async function controlClimate() {
 		newVentilatorState = true;
 	}
 
+	if (newVentilatorState !== ventilatorIsOn) {
+		await outlet.setState(outlet.slot.Ventilator, newVentilatorState);
+		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`, LogType.Info, false);
+	}
+
 	const humidifierIsOn = outlet.isEnabled(outlet.slot.Humidifier);
 	let newHumidifierState = humidifierIsOn;
 	// Turn humidifier on if humidity is too low
@@ -49,11 +90,6 @@ export async function controlClimate() {
 	// Turn humidifier off if it's on and humidity is within range
 	if (humidity >= humiditySufficient) {
 		newHumidifierState = false;
-	}
-
-	if (newVentilatorState !== ventilatorIsOn) {
-		await outlet.setState(outlet.slot.Ventilator, newVentilatorState);
-		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`, LogType.Info, false);
 	}
 
 	if (newHumidifierState !== humidifierIsOn) {

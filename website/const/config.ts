@@ -20,7 +20,6 @@ export const configKeyTexts: Record<keyof ApiConfig, string> = {
 	TASK_CLIMATE_CONTROL: 'Climate Control Task',
 	TASK_CLIMATE_LOG: 'Climate Log Task',
 	TASK_LOG_BROOM: 'Log Broom Task',
-	TASK_SWITCH_DEVICES: 'Turn Devices On/Off Task',
 
 	LOG_LIFESPAN: 'Log Lifespan',
 	RECORD_LIFESPAN: 'Record Lifespan',

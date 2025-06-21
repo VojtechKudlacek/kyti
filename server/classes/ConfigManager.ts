@@ -19,7 +19,6 @@ type ConfigVariableTypeMap = {
 	[dbConfigVariable.taskClimateControl]: boolean;
 	[dbConfigVariable.taskClimateLog]: boolean;
 	[dbConfigVariable.taskLogBroom]: boolean;
-	[dbConfigVariable.taskSwitchDevices]: boolean;
 
 	[dbConfigVariable.graphTemperatureMin]: number;
 	[dbConfigVariable.graphTemperatureMax]: number;
@@ -50,7 +49,6 @@ export const dbConfigVariable = {
 	taskClimateControl: 'TASK_CLIMATE_CONTROL',
 	taskClimateLog: 'TASK_CLIMATE_LOG',
 	taskLogBroom: 'TASK_LOG_BROOM',
-	taskSwitchDevices: 'TASK_SWITCH_DEVICES',
 
 	graphTemperatureMin: 'GRAPH_TEMPERATURE_MIN',
 	graphTemperatureMax: 'GRAPH_TEMPERATURE_MAX',
@@ -81,7 +79,6 @@ export const defaultDbConfigValues: DbConfig = {
 	[dbConfigVariable.taskClimateControl]: true,
 	[dbConfigVariable.taskClimateLog]: true,
 	[dbConfigVariable.taskLogBroom]: true,
-	[dbConfigVariable.taskSwitchDevices]: true,
 
 	[dbConfigVariable.graphTemperatureMin]: 20,
 	[dbConfigVariable.graphTemperatureMax]: 30,

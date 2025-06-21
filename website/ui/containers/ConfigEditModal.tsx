@@ -17,7 +17,6 @@ interface FormValues {
 	TASK_CLIMATE_CONTROL: boolean;
 	TASK_CLIMATE_LOG: boolean;
 	TASK_LOG_BROOM: boolean;
-	TASK_SWITCH_DEVICES: boolean;
 	GRAPH_TEMPERATURE: [number, number];
 	GRAPH_HUMIDITY: [number, number];
 	LOG_LIFESPAN: number;
@@ -225,15 +224,6 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 					name="TASK_LOG_BROOM"
 					initialValue={config.TASK_LOG_BROOM}
 					rules={[{ required: true, message: 'Please select a log broom task on/off!' }]}
-				>
-					<Switch />
-				</Form.Item>
-
-				<Form.Item<FormValues>
-					label="Switch devices task"
-					name="TASK_SWITCH_DEVICES"
-					initialValue={config.TASK_SWITCH_DEVICES}
-					rules={[{ required: true, message: 'Please select a switch devices task on/off!' }]}
 				>
 					<Switch />
 				</Form.Item>

@@ -29,7 +29,6 @@ export interface ApiConfig {
 	TASK_CLIMATE_CONTROL: boolean;
 	TASK_CLIMATE_LOG: boolean;
 	TASK_LOG_BROOM: boolean;
-	TASK_SWITCH_DEVICES: boolean;
 
 	GRAPH_TEMPERATURE_MIN: number;
 	GRAPH_TEMPERATURE_MAX: number;
