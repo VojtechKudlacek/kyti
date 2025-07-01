@@ -26,7 +26,6 @@ export interface ApiConfig {
 	OUTLET_SLOT_FAN: number;
 	OUTLET_SLOT_HUMIDIFIER: number;
 
-	TASK_CLIMATE_CONTROL: boolean;
 	TASK_CLIMATE_LOG: boolean;
 	TASK_LOG_BROOM: boolean;
 

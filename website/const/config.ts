@@ -17,7 +17,6 @@ export const configKeyTexts: Record<keyof ApiConfig, string> = {
 	OUTLET_SLOT_HUMIDIFIER: 'Outlet Slot Humidifier',
 	OUTLET_SLOT_FAN: 'Outlet Slot Fan',
 
-	TASK_CLIMATE_CONTROL: 'Climate Control Task',
 	TASK_CLIMATE_LOG: 'Climate Log Task',
 	TASK_LOG_BROOM: 'Log Broom Task',
 

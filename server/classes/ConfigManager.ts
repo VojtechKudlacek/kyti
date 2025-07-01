@@ -16,7 +16,6 @@ type ConfigVariableTypeMap = {
 	[dbConfigVariable.outletSlotFan]: 1 | 2 | 3 | 4;
 	[dbConfigVariable.outletSlotHumidifier]: 1 | 2 | 3 | 4;
 
-	[dbConfigVariable.taskClimateControl]: boolean;
 	[dbConfigVariable.taskClimateLog]: boolean;
 	[dbConfigVariable.taskLogBroom]: boolean;
 
@@ -48,7 +47,6 @@ export const dbConfigVariable = {
 	outletSlotFan: 'OUTLET_SLOT_FAN',
 	outletSlotHumidifier: 'OUTLET_SLOT_HUMIDIFIER',
 
-	taskClimateControl: 'TASK_CLIMATE_CONTROL',
 	taskClimateLog: 'TASK_CLIMATE_LOG',
 	taskLogBroom: 'TASK_LOG_BROOM',
 
@@ -80,7 +78,6 @@ export const defaultDbConfigValues: DbConfig = {
 	[dbConfigVariable.outletSlotFan]: 3,
 	[dbConfigVariable.outletSlotHumidifier]: 4,
 
-	[dbConfigVariable.taskClimateControl]: true,
 	[dbConfigVariable.taskClimateLog]: true,
 	[dbConfigVariable.taskLogBroom]: true,
 

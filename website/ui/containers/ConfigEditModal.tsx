@@ -14,7 +14,6 @@ interface FormValues {
 	OUTLET_SLOT_VENTILATOR: number;
 	OUTLET_SLOT_FAN: number;
 	OUTLET_SLOT_HUMIDIFIER: number;
-	TASK_CLIMATE_CONTROL: boolean;
 	TASK_CLIMATE_LOG: boolean;
 	TASK_LOG_BROOM: boolean;
 	GRAPH_TEMPERATURE: [number, number];
@@ -204,15 +203,6 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 						<Radio.Button value={3}>3</Radio.Button>
 						<Radio.Button value={4}>4</Radio.Button>
 					</Radio.Group>
-				</Form.Item>
-
-				<Form.Item<FormValues>
-					label="Climate control task"
-					name="TASK_CLIMATE_CONTROL"
-					initialValue={config.TASK_CLIMATE_CONTROL}
-					rules={[{ required: true, message: 'Please select a climate control task on/off!' }]}
-				>
-					<Switch />
 				</Form.Item>
 
 				<Form.Item<FormValues>

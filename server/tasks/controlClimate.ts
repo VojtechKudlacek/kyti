@@ -5,7 +5,7 @@ import { LogType, log } from '../db/log';
 import { climateObserver, configManager, outlet } from '../instances';
 
 export async function controlClimate() {
-	if (!configManager.getValue(dbConfigVariable.taskClimateControl)) {
+	if (configManager.getValue(dbConfigVariable.mode) === 'OFF') {
 		return;
 	}
 
