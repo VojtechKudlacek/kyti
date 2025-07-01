@@ -28,4 +28,6 @@ export const configKeyTexts: Record<keyof ApiConfig, string> = {
 	LIGHT_TURN_OFF_TIME: 'Light Turn Off Time',
 	FAN_TURN_ON_TIME: 'Fan Turn On Time',
 	FAN_TURN_OFF_TIME: 'Fan Turn Off Time',
+
+	MODE: 'Mode',
 };

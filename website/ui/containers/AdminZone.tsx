@@ -3,6 +3,7 @@ import { secretAtom } from 'store/secret';
 import { Authentication } from './Authentication';
 import { ConfigCard } from './ConfigCard';
 import { LogsCard } from './LogsCard';
+import { ModeCard } from './ModeCard';
 
 export function AdminZone() {
 	const secret = useAtomValue(secretAtom);
@@ -12,6 +13,7 @@ export function AdminZone() {
 			{secret && (
 				<>
 					<ConfigCard />
+					<ModeCard />
 					<LogsCard />
 				</>
 			)}

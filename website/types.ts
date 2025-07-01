@@ -42,4 +42,6 @@ export interface ApiConfig {
 	LIGHT_TURN_OFF_TIME: string;
 	FAN_TURN_ON_TIME: string;
 	FAN_TURN_OFF_TIME: string;
+
+	MODE: 'GROW' | 'DRY' | 'OFF';
 }

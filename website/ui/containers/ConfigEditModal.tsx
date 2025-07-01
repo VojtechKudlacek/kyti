@@ -56,6 +56,10 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 	}
 
 	async function formSubmitHandler(formValues: FormValues) {
+		if (!config) {
+			return;
+		}
+
 		setLoading(true);
 		const {
 			TEMPERATURE,
@@ -70,6 +74,7 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 		} = formValues;
 
 		const formApiConfig: ApiConfig = {
+			...config,
 			...rest,
 			TEMPERATURE_MIN: TEMPERATURE[0],
 			TEMPERATURE_MAX: TEMPERATURE[1],
