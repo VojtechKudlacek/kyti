@@ -236,13 +236,13 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 				>
 					<Slider
 						range
-						min={20}
-						max={30}
+						min={18}
+						max={32}
 						marks={{
 							[config.GRAPH_TEMPERATURE_MIN]: `${config.GRAPH_TEMPERATURE_MIN}`,
 							[config.GRAPH_TEMPERATURE_MAX]: `${config.GRAPH_TEMPERATURE_MAX}`,
-							20: '20°C',
-							30: '30°C',
+							18: '18°C',
+							32: '32°C',
 						}}
 					/>
 				</Form.Item>
@@ -255,13 +255,13 @@ export function ConfigEditModal({ onClose }: ConfigEditModalProps) {
 				>
 					<Slider
 						range
-						min={30}
-						max={80}
+						min={20}
+						max={90}
 						marks={{
 							[config.GRAPH_HUMIDITY_MIN]: `${config.GRAPH_HUMIDITY_MIN}`,
 							[config.GRAPH_HUMIDITY_MAX]: `${config.GRAPH_HUMIDITY_MAX}`,
-							30: '30%',
-							80: '80%',
+							20: '20%',
+							90: '90%',
 						}}
 					/>
 				</Form.Item>
