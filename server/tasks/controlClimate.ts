@@ -1,18 +1,64 @@
-import assert from 'node:assert/strict';
-import { parse } from 'date-fns';
+import { getHours, parse } from 'date-fns';
 import { dbConfigVariable } from '../classes/ConfigManager';
 import { LogType, log } from '../db/log';
 import { climateObserver, configManager, outlet } from '../instances';
 
-export async function controlClimate() {
-	if (configManager.getValue(dbConfigVariable.mode) === 'OFF') {
-		return;
+async function setLight(state: boolean) {
+	await outlet.setState(outlet.slot.Light, state);
+	log(`Light: ${state ? 'on' : 'off'}`, LogType.Info, false);
+}
+
+async function setVentilator(state: boolean) {
+	await outlet.setState(outlet.slot.Ventilator, state);
+	log(`Ventilator: ${state ? 'on' : 'off'}`, LogType.Info, false);
+}
+
+async function setHumidifier(state: boolean) {
+	await outlet.setState(outlet.slot.Humidifier, state);
+	log(`Humidifier: ${state ? 'on' : 'off'}`, LogType.Info, false);
+}
+
+async function setFan(state: boolean) {
+	await outlet.setState(outlet.slot.Fan, state);
+	log(`Fan: ${state ? 'on' : 'off'}`, LogType.Info, false);
+}
+
+async function runOffMode() {
+	const lightIsOn = outlet.isEnabled(outlet.slot.Light);
+	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
+	const humidifierIsOn = outlet.isEnabled(outlet.slot.Humidifier);
+	const fanIsOn = outlet.isEnabled(outlet.slot.Fan);
+
+	if (lightIsOn) {
+		await setLight(false);
 	}
 
+	if (fanIsOn) {
+		await setFan(false);
+	}
+
+	if (ventilatorIsOn) {
+		await setVentilator(false);
+	}
+
+	if (humidifierIsOn) {
+		await setHumidifier(false);
+	}
+}
+
+async function runGrowMode() {
 	const currentTime = Date.now();
 
 	const lightIsOn = outlet.isEnabled(outlet.slot.Light);
+	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
+	const humidifierIsOn = outlet.isEnabled(outlet.slot.Humidifier);
+	const fanIsOn = outlet.isEnabled(outlet.slot.Fan);
+
 	let newLightState = lightIsOn;
+	let newVentilatorState = ventilatorIsOn;
+	let newHumidifierState = humidifierIsOn;
+	let newFanState = fanIsOn;
+
 	const lightTurnOffTime = parse(
 		configManager.getValue(dbConfigVariable.lightTurnOffTime),
 		'HH:mm',
@@ -32,12 +78,9 @@ export async function controlClimate() {
 	}
 
 	if (newLightState !== lightIsOn) {
-		await outlet.setState(outlet.slot.Light, newLightState);
-		log(`Light: ${newLightState ? 'on' : 'off'}`, LogType.Info, false);
+		await setLight(newLightState);
 	}
 
-	const fanIsOn = outlet.isEnabled(outlet.slot.Fan);
-	let newFanState = fanIsOn;
 	const fanTurnOffTime = parse(configManager.getValue(dbConfigVariable.fanTurnOffTime), 'HH:mm', new Date()).getTime();
 	const fanTurnOnTime = parse(configManager.getValue(dbConfigVariable.fanTurnOnTime), 'HH:mm', new Date()).getTime();
 	if (fanIsOn) {
@@ -50,8 +93,13 @@ export async function controlClimate() {
 
 	const { temperature, humidity } = climateObserver.getCurrentClimateData();
 
-	assert(temperature !== null, 'Temperature is outdated for climate control');
-	assert(humidity !== null, 'Humidity is outdated for climate control');
+	if (!temperature || !humidity) {
+		setHumidifier(false);
+		setVentilator(true);
+		setFan(true);
+		log('No climate data, using fallback settings', LogType.Warning);
+		return;
+	}
 
 	const temperatureMin = configManager.getValue(dbConfigVariable.temperatureMin);
 	const temperatureMax = configManager.getValue(dbConfigVariable.temperatureMax);
@@ -60,8 +108,6 @@ export async function controlClimate() {
 	const humidityMax = configManager.getValue(dbConfigVariable.humidityMax);
 	const humiditySufficient = (humidityMin + humidityMax) / 2;
 
-	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
-	let newVentilatorState = ventilatorIsOn;
 	// Turn ventilator off if light is off and temperature is too high (at night)
 	if (!newLightState && temperature < temperatureMax) {
 		newVentilatorState = false;
@@ -79,8 +125,6 @@ export async function controlClimate() {
 		newVentilatorState = true;
 	}
 
-	const humidifierIsOn = outlet.isEnabled(outlet.slot.Humidifier);
-	let newHumidifierState = humidifierIsOn;
 	// Turn humidifier on if humidity is too low
 	if (humidity < humidityMin) {
 		newHumidifierState = true;
@@ -95,17 +139,104 @@ export async function controlClimate() {
 	}
 
 	if (newFanState !== fanIsOn) {
-		await outlet.setState(outlet.slot.Fan, newFanState);
-		log(`Fan: ${newFanState ? 'on' : 'off'}`, LogType.Info, false);
+		await setFan(newFanState);
 	}
 
 	if (newVentilatorState !== ventilatorIsOn) {
-		await outlet.setState(outlet.slot.Ventilator, newVentilatorState);
-		log(`Ventilator: ${newVentilatorState ? 'on' : 'off'}`, LogType.Info, false);
+		await setVentilator(newVentilatorState);
 	}
 
 	if (newHumidifierState !== humidifierIsOn) {
-		await outlet.setState(outlet.slot.Humidifier, newHumidifierState);
-		log(`Humidifier: ${newHumidifierState ? 'on' : 'off'}`, LogType.Info, false);
+		await setHumidifier(newHumidifierState);
+	}
+}
+
+async function runDryMode() {
+	const lightIsOn = outlet.isEnabled(outlet.slot.Light);
+	const ventilatorIsOn = outlet.isEnabled(outlet.slot.Ventilator);
+	const humidifierIsOn = outlet.isEnabled(outlet.slot.Humidifier);
+	const fanIsOn = outlet.isEnabled(outlet.slot.Fan);
+
+	if (lightIsOn) {
+		await setLight(false);
+	}
+
+	if (!fanIsOn) {
+		await setFan(true);
+	}
+
+	const { temperature, humidity } = climateObserver.getCurrentClimateData();
+
+	if (!temperature || !humidity) {
+		setHumidifier(false);
+		setVentilator(false);
+		log('No climate data, using fallback settings', LogType.Warning);
+		return;
+	}
+
+	const temperatureMin = configManager.getValue(dbConfigVariable.temperatureMin);
+	const temperatureMax = configManager.getValue(dbConfigVariable.temperatureMax);
+	const temperatureDifference = temperatureMax - temperatureMin;
+	const temperatureToTurnOnVentilator = temperatureMin + temperatureDifference * 0.25;
+	const temperatureToTurnOffVentilator = temperatureMin + temperatureDifference * 0.1;
+
+	const humidityMin = configManager.getValue(dbConfigVariable.humidityMin);
+	const humidityMax = configManager.getValue(dbConfigVariable.humidityMax);
+	const humidityDifference = humidityMax - humidityMin;
+	const humidityToTurnOffHumidifier = humidityMin + humidityDifference * 0.5;
+
+	let newVentilatorState = ventilatorIsOn;
+	let newHumidifierState = humidifierIsOn;
+
+	const now = new Date();
+	const isNight = getHours(now) >= 22 || getHours(now) < 9;
+	const isDay = !isNight;
+
+	// Summer hack to not heat up with room temperature
+	if (isDay) {
+		newVentilatorState = false;
+	}
+
+	// Summer hack to cool down at night
+	if (temperature > temperatureToTurnOnVentilator && isNight) {
+		newVentilatorState = true;
+	}
+
+	if (temperature < temperatureToTurnOffVentilator) {
+		newVentilatorState = false;
+	}
+
+	if (humidity < humidityMin) {
+		newHumidifierState = true;
+	}
+
+	if (humidity >= humidityToTurnOffHumidifier) {
+		newHumidifierState = false;
+	}
+
+	if (newVentilatorState !== ventilatorIsOn) {
+		await setVentilator(newVentilatorState);
+	}
+
+	if (newHumidifierState !== humidifierIsOn) {
+		await setHumidifier(newHumidifierState);
+	}
+}
+
+export async function controlClimate() {
+	const mode = configManager.getValue(dbConfigVariable.mode);
+
+	switch (mode) {
+		case 'OFF':
+			await runOffMode();
+			break;
+		case 'GROW':
+			await runGrowMode();
+			break;
+		case 'DRY':
+			await runDryMode();
+			break;
+		default:
+			log(`Unknown mode: ${mode}`, LogType.Error);
 	}
 }
