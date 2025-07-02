@@ -236,6 +236,8 @@ export async function controlClimate() {
 		case 'DRY':
 			await runDryMode();
 			break;
+		case 'APP_OFF':
+			break;
 		default:
 			log(`Unknown mode: ${mode}`, LogType.Error);
 	}

@@ -32,7 +32,7 @@ type ConfigVariableTypeMap = {
 	[dbConfigVariable.fanTurnOnTime]: `${string}:${string}`;
 	[dbConfigVariable.fanTurnOffTime]: `${string}:${string}`;
 
-	[dbConfigVariable.mode]: 'GROW' | 'DRY' | 'OFF';
+	[dbConfigVariable.mode]: 'GROW' | 'DRY' | 'OFF' | 'APP_OFF';
 };
 
 export const dbConfigVariable = {
@@ -94,7 +94,7 @@ export const defaultDbConfigValues: DbConfig = {
 	[dbConfigVariable.fanTurnOnTime]: '07:10',
 	[dbConfigVariable.fanTurnOffTime]: '23:10',
 
-	[dbConfigVariable.mode]: 'OFF',
+	[dbConfigVariable.mode]: 'APP_OFF',
 };
 
 export const dbConfigVariables = Object.values(dbConfigVariable);

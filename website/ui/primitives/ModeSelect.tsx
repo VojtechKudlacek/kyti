@@ -17,6 +17,7 @@ export function ModeSelect({ value, onChange }: ModeSelectProps) {
 				{ value: 'GROW', label: 'Grow' },
 				{ value: 'DRY', label: 'Dry' },
 				{ value: 'OFF', label: 'Off' },
+				{ value: 'APP_OFF', label: 'App Off' },
 			]}
 		/>
 	);
