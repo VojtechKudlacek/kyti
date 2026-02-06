@@ -11,9 +11,6 @@ type PathType = (typeof Path)[keyof typeof Path];
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
-export const baseUrl = 'https://kyti.vojtechkudlacek.cz';
-export const apiPath = `${baseUrl}/api`;
-
 interface RequestOptions {
 	method?: Method;
 	body?: string;
@@ -22,7 +19,7 @@ interface RequestOptions {
 }
 
 export async function request<T = unknown>(path: PathType, options: RequestOptions = {}): Promise<T> {
-	let url = `${apiPath}${path}`;
+	let url = `/api/${path}`;
 	for (const [key, value] of Object.entries(options.params ?? {})) {
 		url = url.replace(`:${key}`, value);
 	}

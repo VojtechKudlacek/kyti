@@ -4,9 +4,8 @@ import { changeConfigValueAtom, configAtom } from 'store/config';
 import { addLogAtom, fetchLogsAtom } from 'store/logs';
 import { addRecordAtom } from 'store/records';
 import type { ApiConfig, ApiLog, ApiRecord } from 'types';
-import { baseUrl } from './common';
 
-export const socket = io(baseUrl);
+export const socket = io();
 
 socket.on('connect_error', (err) => {
 	console.log(`Socket connect_error due to ${err.message}`);
