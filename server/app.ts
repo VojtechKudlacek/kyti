@@ -52,7 +52,7 @@ export async function run() {
 		await new Promise<void>((resolve) => fastify.server.listen({ port: 80, host: '0.0.0.0' }, resolve));
 
 		// Scheduler
-		scheduler.addTask('Outlet State Refresher', 30, refreshOutletState);
+		scheduler.addTask('Outlet State Refresher', 20, refreshOutletState);
 		scheduler.addTask('Climate Controller', 20, controlClimate);
 		scheduler.addTask('Records Collector', 20, collectRecords);
 		scheduler.addTask('Records Broomer', 60 * 15, broomRecords);

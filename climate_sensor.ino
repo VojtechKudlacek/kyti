@@ -7,13 +7,15 @@
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-const char* ssid = "<WIFI_SSID>";
-const char* password = "<WIFI_PASSWORD>";
+// WiFi
+const char* ssid = "Vodafone-9DEF";
+const char* password = "PyFbuCCBFCiWCayW";
 
-const char* host = "<HOST_URL>";
+const char* host = "192.168.0.73";
+const int httpPort = 80;
+
 const char* apiUrl = "/api/climate";
-const int httpsPort = 443;
-const char* token = "<CLIMATE_CONTROL_SECRET>";
+const char* token = "b1db5b4b-900e-4ef6-b81e-3b1004f1a81a";
 
 Adafruit_BME280 bme;
 
@@ -21,16 +23,15 @@ void setup() {
   Serial.begin(115200);
   delay(100);
 
-  // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println(" connected.");
 
-  // Initialize sensor
   if (!bme.begin(0x76)) {
     Serial.println("Could not find a valid BME280 sensor!");
     while (1);
@@ -43,11 +44,13 @@ void loop() {
 
   Serial.printf("Temp: %.2f C, Humidity: %.2f%%\n", temperature, humidity);
 
-  WiFiClientSecure client;
-  client.setInsecure(); // skip SSL certificate verification
+  // Use WiFiClient for HTTP (Use WiFiClientSecure only for HTTPS/443)
+  WiFiClient client;
 
-  if (!client.connect(host, httpsPort)) {
+  // CONNECT: Note we use the new 'port' variable (3000)
+  if (!client.connect(host, httpPort)) {
     Serial.println("Connection failed!");
+    delay(10000); // Wait 10 seconds before next reading
     return;
   }
 
@@ -62,6 +65,7 @@ void loop() {
 
   // Send HTTP POST
   client.println("POST " + String(apiUrl) + " HTTP/1.1");
+  // Host header usually includes the port if it's non-standard
   client.println("Host: " + String(host));
   client.println("Content-Type: application/json");
   client.print("Content-Length: ");
@@ -69,7 +73,7 @@ void loop() {
   client.println();
   client.println(requestBody);
 
-  // Read and print the response
+  // Read response
   while (client.connected()) {
     String line = client.readStringUntil('\n');
     if (line == "\r") break;
@@ -79,5 +83,5 @@ void loop() {
   Serial.println("Response:");
   Serial.println(response);
 
-  delay(15000); // Wait 15 seconds before sending next reading
+  delay(10000); // Wait 10 seconds before next reading
 }

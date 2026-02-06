@@ -13,7 +13,7 @@ interface SocketSlots {
 	Fan: number | null;
 }
 
-const keepAliveMiliseconds = 10_000; // 10 seconds
+const keepAliveMiliseconds = 5_000; // 5 seconds
 
 export class Outlet {
 	private state = new Map<number, boolean>();
