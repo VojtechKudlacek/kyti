@@ -1,10 +1,10 @@
 import { ApiError } from './ApiError';
 
 export const Path = {
-	Records: '/records',
-	Logs: '/logs',
-	Config: '/config',
-	ConfigKey: '/config/:key',
+	Records: 'records',
+	Logs: 'logs',
+	Config: 'config',
+	ConfigKey: 'config/:key',
 } as const;
 
 type PathType = (typeof Path)[keyof typeof Path];
