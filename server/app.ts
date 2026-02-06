@@ -49,7 +49,7 @@ export async function run() {
 		await fastify.ready();
 		const io = new SocketIOServer(fastify.server, { cors: { origin: '*' } });
 		socketManager.initialize(io);
-		await new Promise<void>((resolve) => fastify.server.listen(3000, resolve));
+		await new Promise<void>((resolve) => fastify.server.listen({ port: 3000, host: '0.0.0.0' }, resolve));
 
 		// Scheduler
 		scheduler.addTask('Outlet State Refresher', 30, refreshOutletState);
