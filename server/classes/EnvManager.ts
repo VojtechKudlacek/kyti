@@ -3,16 +3,14 @@ import assert from 'node:assert/strict';
 type EnvConfigVariable = (typeof envConfigVariable)[keyof typeof envConfigVariable];
 
 type ConfigVariableTypeMap = {
-	[envConfigVariable.tuyaOutletDeviceId]: string;
-	[envConfigVariable.tuyaOutletDeviceKey]: string;
+	[envConfigVariable.shellyOutletUrl]: string;
 	[envConfigVariable.climateControlSecret]: string;
 	[envConfigVariable.adminPassword]: string;
 	[envConfigVariable.dbName]: string;
 };
 
 export const envConfigVariable = {
-	tuyaOutletDeviceId: 'TUYA_OUTLET_DEVICE_ID',
-	tuyaOutletDeviceKey: 'TUYA_OUTLET_DEVICE_KEY',
+	shellyOutletUrl: 'SHELLY_OUTLET_URL',
 	climateControlSecret: 'CLIMATE_CONTROL_SECRET',
 	adminPassword: 'ADMIN_PASSWORD',
 	dbName: 'DB_NAME',
