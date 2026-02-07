@@ -16,7 +16,6 @@
 		"website:check": "biome check --write website",
 		"website:preview": "vite preview",
 		"db:purge": "rm kyti.db",
-		"db:config": "node scripts/config.ts",
 		"all:deploy": "pnpm server:deploy && pnpm website:build"
 	},
 	"author": "Vojtech Kudlacek",
