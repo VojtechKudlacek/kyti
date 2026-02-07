@@ -3,7 +3,7 @@ import 'dotenv/config';
 import path from 'node:path';
 import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
-import { Server as SocketIOServer } from 'socket.io';
+import { WebSocketServer } from 'ws';
 import { apiRoutes } from './api';
 import { envConfigVariable } from './classes/EnvManager';
 import { LogType, log } from './db/log';
@@ -47,8 +47,8 @@ export async function run() {
 			reply.status(500).send({ error });
 		});
 		await fastify.ready();
-		const io = new SocketIOServer(fastify.server, { cors: { origin: '*' } });
-		socketManager.initialize(io);
+		const wss = new WebSocketServer({ server: fastify.server });
+		socketManager.initialize(wss);
 		await new Promise<void>((resolve) => fastify.server.listen({ port: 80, host: '0.0.0.0' }, resolve));
 
 		// Scheduler

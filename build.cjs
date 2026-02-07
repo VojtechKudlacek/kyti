@@ -28,8 +28,8 @@ esbuild.build({
 		'date-fns',
 		'dotenv',
 		'fastify',
-		'socket.io',
 		'tuyapi',
+		'ws',
   ]
 }).then((result) => {
 	for (const output in result.metafile.outputs) {
