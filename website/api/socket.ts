@@ -1,8 +1,9 @@
 import { jotaiStore } from 'store';
 import { changeConfigValueAtom, configAtom } from 'store/config';
 import { addLogAtom, fetchLogsAtom } from 'store/logs';
+import { outletStateAtom } from 'store/outlets';
 import { addRecordAtom } from 'store/records';
-import type { ApiConfig, ApiLog, ApiRecord } from 'types';
+import type { ApiConfig, ApiLog, ApiRecord, OutletStatus } from 'types';
 
 let socket: WebSocket | null = null;
 let reconnectTimer: number | null = null;
@@ -57,6 +58,9 @@ function connect() {
 					}
 					break;
 				}
+				case 'outletState':
+					jotaiStore.set(outletStateAtom, data as Record<number, OutletStatus>);
+					break;
 				default:
 					console.warn('Unknown socket message type', type);
 			}
@@ -67,5 +71,9 @@ function connect() {
 }
 
 connect();
+
+export function sendOutletState(slot: number, state: boolean) {
+	socket?.send(JSON.stringify({ type: 'setOutletState', data: { slot, state } }));
+}
 
 export { socket };

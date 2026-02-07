@@ -4,6 +4,7 @@ import { Authentication } from './Authentication';
 import { ConfigCard } from './ConfigCard';
 import { LogsCard } from './LogsCard';
 import { ModeCard } from './ModeCard';
+import { PowerStripCard } from './PowerStripCard';
 
 export function AdminZone() {
 	const secret = useAtomValue(secretAtom);
@@ -15,6 +16,7 @@ export function AdminZone() {
 					<ConfigCard />
 					<ModeCard />
 					<LogsCard />
+					<PowerStripCard />
 				</>
 			)}
 			<Authentication />

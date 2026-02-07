@@ -44,3 +44,12 @@ export interface ApiConfig {
 
 	MODE: 'GROW' | 'DRY' | 'OFF';
 }
+
+export interface OutletStatus {
+	isOn: boolean;
+	activePower: number;
+	voltage: number;
+	current: number;
+	powerFactor: number;
+	totalEnergy: number;
+}

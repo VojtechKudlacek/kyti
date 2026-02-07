@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import WebSocket from 'ws';
 import { LogType, log } from '../db/log';
-import { configManager, envManager } from '../instances';
+import { configManager, envManager, socketManager } from '../instances';
 import { stringifyError } from '../utils';
 import { dbConfigVariable } from './ConfigManager';
 import { envConfigVariable } from './EnvManager';
@@ -20,7 +20,7 @@ interface JsonRpcRequest {
 	params?: Record<string, unknown>;
 }
 
-interface OutletStatus {
+export interface OutletStatus {
 	isOn: boolean;
 	activePower: number;
 	voltage: number;
@@ -169,6 +169,8 @@ export class Outlet {
 			powerFactor: status.pf,
 			totalEnergy: status.aenergy.total,
 		});
+
+		socketManager.emitOutletState(this.getAllStates());
 	}
 
 	private updateStateFromNotification(params: Record<string, unknown>): void {
@@ -221,6 +223,8 @@ export class Outlet {
 								...currentState,
 								...updates,
 							});
+
+							socketManager.emitOutletState(this.getAllStates());
 						}
 					}
 				}
@@ -297,10 +301,15 @@ export class Outlet {
 		const currentState = this.state.get(socket);
 		if (currentState) {
 			this.state.set(socket, { ...currentState, isOn: newState });
+			socketManager.emitOutletState(this.getAllStates());
 		}
 
 		this.sendCommand('Switch.Set', { id: shellyId, on: newState }, { type: 'SetStatus', slot: socket, newState });
 
 		return newState;
+	}
+
+	public getAllStates(): Record<number, OutletStatus> {
+		return Object.fromEntries(this.state);
 	}
 }
