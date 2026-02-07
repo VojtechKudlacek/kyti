@@ -52,6 +52,7 @@
 		"@types/prompts": "^2.4.9",
 		"@types/react": "^19.2.13",
 		"@types/react-dom": "^19.2.3",
+		"@types/ws": "^8.18.1",
 		"@vitejs/plugin-react-swc": "^3.11.0",
 		"esbuild": "^0.25.12",
 		"globals": "^16.5.0",
