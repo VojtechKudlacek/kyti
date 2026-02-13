@@ -20,3 +20,10 @@ export const configSchema = sqliteTable('config', {
 	key: text('key').primaryKey(),
 	value: text('value').notNull(),
 });
+
+export const schedulesSchema = sqliteTable('schedules', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	type: text('type', { enum: ['light'] }).notNull(),
+	time: text('time').notNull(),
+	state: text('state').notNull(),
+});

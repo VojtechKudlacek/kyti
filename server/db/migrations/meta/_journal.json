@@ -8,6 +8,13 @@
 			"when": 1770994295100,
 			"tag": "0000_giant_zarda",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1771013813376,
+			"tag": "0001_amused_amazoness",
+			"breakpoints": true
 		}
 	]
 }
