@@ -36,7 +36,7 @@ interface Task {
 	fn: TaskFn;
 }
 
-export class Scheduler {
+export class TaskScheduler {
 	private tasks: Array<Task> = [];
 	private interval: NodeJS.Timeout | null = null;
 

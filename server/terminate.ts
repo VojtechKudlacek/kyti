@@ -1,5 +1,5 @@
 import { LogType, log } from './db/log';
-import { databaseClient, fastify, scheduler } from './instances';
+import { databaseClient, fastify, taskScheduler } from './instances';
 
 let isTerminating = false;
 
@@ -9,7 +9,7 @@ export function terminate(reason: string, exitCode = 0) {
 	}
 	isTerminating = true;
 	log(`Terminating process: ${reason}`, exitCode === 0 ? LogType.Info : LogType.Error);
-	scheduler.stop();
+	taskScheduler.stop();
 	databaseClient.close();
 	fastify.close();
 	// Give a small grace period for cleanup operations

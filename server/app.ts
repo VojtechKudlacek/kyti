@@ -8,7 +8,7 @@ import { apiRoutes } from './api';
 import { envConfigVariable } from './classes/EnvManager';
 import { LogType, log } from './db/log';
 import { setupDatabase } from './db/setup';
-import { configManager, databaseClient, envManager, fastify, outlet, scheduler, socketManager } from './instances';
+import { configManager, databaseClient, envManager, fastify, outlet, socketManager, taskScheduler } from './instances';
 import { broomRecords, collectRecords, controlClimate } from './tasks';
 import { refreshOutletState } from './tasks/refreshOutletState';
 import { terminate } from './terminate';
@@ -52,11 +52,11 @@ export async function run() {
 		await new Promise<void>((resolve) => fastify.server.listen({ port: 80, host: '0.0.0.0' }, resolve));
 
 		// Scheduler
-		scheduler.addTask('Outlet State Refresher', 20, refreshOutletState);
-		scheduler.addTask('Climate Controller', 20, controlClimate);
-		scheduler.addTask('Records Collector', 20, collectRecords);
-		scheduler.addTask('Records Broomer', 60 * 15, broomRecords);
-		scheduler.start();
+		taskScheduler.addTask('Outlet State Refresher', 20, refreshOutletState);
+		taskScheduler.addTask('Climate Controller', 20, controlClimate);
+		taskScheduler.addTask('Records Collector', 20, collectRecords);
+		taskScheduler.addTask('Records Broomer', 60 * 15, broomRecords);
+		taskScheduler.start();
 
 		// Termination handlers
 		process.on('SIGINT', () => terminate('SIGINT')); // Ctrl+C
