@@ -1,20 +1,6 @@
-export interface ConfigEntity {
-	key: string;
-	value: string;
-}
+import type { InferSelectModel } from 'drizzle-orm';
+import type { configSchema, logSchema, recordSchema } from './schema';
 
-export interface RecordEntity {
-	timestamp: number;
-	temperature: number | null;
-	humidity: number | null;
-	light: boolean;
-	fan: boolean;
-	humidifier: boolean;
-	ventilator: boolean;
-}
-
-export interface LogEntity {
-	timestamp: number;
-	type: 'INFO' | 'WARNING' | 'ERROR';
-	message: string;
-}
+export type ConfigEntity = InferSelectModel<typeof configSchema>;
+export type RecordEntity = InferSelectModel<typeof recordSchema>;
+export type LogEntity = InferSelectModel<typeof logSchema>;

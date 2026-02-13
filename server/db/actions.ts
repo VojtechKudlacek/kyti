@@ -1,66 +1,48 @@
+import { type SQL, and, asc, desc, eq, gte, lt, lte } from 'drizzle-orm';
 import { databaseClient } from '../instances';
+import { configSchema, logSchema, recordSchema } from './schema';
 import type { ConfigEntity, LogEntity, RecordEntity } from './types';
 
 export function getConfig(): Array<ConfigEntity> {
-	return databaseClient.db.prepare<[], ConfigEntity>('SELECT * FROM config').all();
+	return databaseClient.db.select().from(configSchema).all();
 }
 
 export function updateConfig(key: string, value: string): void {
-	databaseClient.db.prepare<[string, string], void>('UPDATE config SET value = ? WHERE key = ?').run(value, key);
+	databaseClient.db.update(configSchema).set({ value }).where(eq(configSchema.key, key)).run();
 }
 
 export function getRecords(from?: number, to?: number): Array<RecordEntity> {
-	const where: Array<string> = [];
+	const conditions: Array<SQL> = [];
 	if (from) {
-		where.push(`timestamp >= ${from}`);
+		conditions.push(gte(recordSchema.timestamp, from));
 	}
 	if (to) {
-		where.push(`timestamp <= ${to}`);
+		conditions.push(lte(recordSchema.timestamp, to));
 	}
-	return databaseClient.db
-		.prepare<[], RecordEntity>(
-			`SELECT * FROM records ${where.length > 0 ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY timestamp ASC`,
-		)
-		.all()
-		.map((record) => ({
-			...record,
-			light: Boolean(record.light),
-			fan: Boolean(record.fan),
-			humidifier: Boolean(record.humidifier),
-			ventilator: Boolean(record.ventilator),
-		}));
+
+	const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+	return databaseClient.db.select().from(recordSchema).where(whereClause).orderBy(asc(recordSchema.timestamp)).all();
 }
 
 export function insertRecord(record: RecordEntity): void {
-	databaseClient.db
-		.prepare<[number, number | null, number | null, number, number, number, number], RecordEntity>(
-			'INSERT INTO records (timestamp, temperature, humidity, light, fan, humidifier, ventilator) VALUES (?, ?, ?, ?, ?, ?, ?)',
-		)
-		.run(
-			record.timestamp,
-			record.temperature,
-			record.humidity,
-			record.light ? 1 : 0,
-			record.fan ? 1 : 0,
-			record.humidifier ? 1 : 0,
-			record.ventilator ? 1 : 0,
-		);
+	databaseClient.db.insert(recordSchema).values(record).run();
 }
 
 export function getLogs(): Array<LogEntity> {
-	return databaseClient.db.prepare<[], LogEntity>('SELECT * FROM logs ORDER BY timestamp DESC').all();
+	return databaseClient.db.select().from(logSchema).orderBy(desc(logSchema.timestamp)).all();
 }
 
 export function insertLog(log: LogEntity) {
-	databaseClient.db
-		.prepare<[number, string, string], void>('INSERT INTO logs (timestamp, type, message) VALUES (?, ?, ?)')
-		.run(log.timestamp, log.type, log.message);
+	databaseClient.db.insert(logSchema).values(log).run();
 }
 
 export function deleteRecordsOlderThan(timestamp: number): number {
-	return databaseClient.db.prepare<[number], void>('DELETE FROM records WHERE timestamp < ?').run(timestamp).changes;
+	const result = databaseClient.db.delete(recordSchema).where(lt(recordSchema.timestamp, timestamp)).run();
+	return result.changes;
 }
 
 export function deleteLogsOlderThan(timestamp: number): number {
-	return databaseClient.db.prepare<[number], void>('DELETE FROM logs WHERE timestamp < ?').run(timestamp).changes;
+	const result = databaseClient.db.delete(logSchema).where(lt(logSchema.timestamp, timestamp)).run();
+	return result.changes;
 }

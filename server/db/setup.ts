@@ -1,40 +1,19 @@
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { dbConfigVariables, defaultDbConfigValues } from '../classes/ConfigManager';
 import { databaseClient } from '../instances';
+import { configSchema } from './schema';
 
 export function setupDatabase(): void {
-	// Table to store sensor readings and device states
-	databaseClient.db.exec(`
-    CREATE TABLE IF NOT EXISTS records (
-      timestamp INTEGER PRIMARY KEY,
-      temperature REAL,
-      humidity REAL,
-      light BOOLEAN NOT NULL,
-      fan BOOLEAN NOT NULL,
-      humidifier BOOLEAN NOT NULL,
-      ventilator BOOLEAN NOT NULL
-    )
-  `);
-
-	// Table to store timestamped log messages
-	databaseClient.db.exec(`
-    CREATE TABLE IF NOT EXISTS logs (
-      timestamp INTEGER PRIMARY KEY,
-      type TEXT NOT NULL,
-      message TEXT NOT NULL
-    )
-  `);
-
-	// Table to store generic config key-value pairs
-	databaseClient.db.exec(`
-		CREATE TABLE IF NOT EXISTS config (
-			key TEXT PRIMARY KEY,
-			value TEXT NOT NULL
-		)
-	`);
+	// Run migrations
+	migrate(databaseClient.db, { migrationsFolder: 'server/db/migrations' });
 
 	// Insert ConfigManager.Variables into config table if they don't exist
-	const stmt = databaseClient.db.prepare('INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)');
-	for (const variable of dbConfigVariables) {
-		stmt.run(variable, JSON.stringify(defaultDbConfigValues[variable]));
+	const valuesToInsert = dbConfigVariables.map((variable) => ({
+		key: variable,
+		value: JSON.stringify(defaultDbConfigValues[variable]),
+	}));
+
+	if (valuesToInsert.length > 0) {
+		databaseClient.db.insert(configSchema).values(valuesToInsert).onConflictDoNothing().run();
 	}
 }
