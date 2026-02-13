@@ -1,4 +1,6 @@
-import { getConfig, updateConfig } from '../db/actions';
+import { eq } from 'drizzle-orm';
+import { configSchema } from '../db/schema';
+import type { DatabaseClient } from './DatabaseClient';
 
 type ConfigVariable = (typeof dbConfigVariable)[keyof typeof dbConfigVariable];
 
@@ -100,14 +102,19 @@ export const defaultDbConfigValues: DbConfig = {
 export const dbConfigVariables = Object.values(dbConfigVariable);
 
 export class ConfigManager {
+	private databaseClient: DatabaseClient;
 	private config: Map<ConfigVariable, ConfigVariableTypeMap[ConfigVariable]> = new Map();
+
+	constructor(databaseClient: DatabaseClient) {
+		this.databaseClient = databaseClient;
+	}
 
 	public isConfigVariable(variable: string): variable is ConfigVariable {
 		return dbConfigVariables.includes(variable as ConfigVariable);
 	}
 
 	public initialize(): void {
-		const dbConfig = getConfig();
+		const dbConfig = this.databaseClient.db.select().from(configSchema).all();
 		for (const config of dbConfig) {
 			if (this.isConfigVariable(config.key)) {
 				this.config.set(config.key, JSON.parse(config.value) ?? defaultDbConfigValues[config.key]);
@@ -122,7 +129,11 @@ export class ConfigManager {
 
 	public setValue<K extends ConfigVariable>(variable: K, value: ConfigVariableTypeMap[K]) {
 		this.config.set(variable, value);
-		updateConfig(variable, JSON.stringify(value));
+		this.databaseClient.db
+			.update(configSchema)
+			.set({ value: JSON.stringify(value) })
+			.where(eq(configSchema.key, variable))
+			.run();
 	}
 
 	public getConfig(): DbConfig {

@@ -1,7 +1,7 @@
 import { dbConfigVariable } from '../classes/ConfigManager';
-import { insertRecord } from '../db/actions';
+import { recordSchema } from '../db/schema';
 import type { RecordEntity } from '../db/types';
-import { climateObserver, configManager, outlet, socketManager } from '../instances';
+import { climateObserver, configManager, databaseClient, outlet, socketManager } from '../instances';
 
 export function collectRecords(timestamp: number) {
 	const isEnabled = configManager.getValue(dbConfigVariable.taskClimateLog);
@@ -21,6 +21,6 @@ export function collectRecords(timestamp: number) {
 		ventilator: outlet.isEnabled(outlet.slot.Ventilator),
 	};
 
-	insertRecord(newRecord);
+	databaseClient.db.insert(recordSchema).values(newRecord).run();
 	socketManager.emitNewRecord(newRecord);
 }

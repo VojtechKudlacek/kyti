@@ -1,8 +1,9 @@
 import { subHours } from 'date-fns';
+import { lt } from 'drizzle-orm';
 import { dbConfigVariable } from '../classes/ConfigManager';
 import { LogType } from '../classes/Logger';
-import { deleteLogsOlderThan, deleteRecordsOlderThan } from '../db/actions';
-import { configManager, logger, socketManager } from '../instances';
+import { logSchema, recordSchema } from '../db/schema';
+import { configManager, databaseClient, logger, socketManager } from '../instances';
 
 export function broomRecords() {
 	const isEnabled = configManager.getValue(dbConfigVariable.taskLogBroom);
@@ -16,8 +17,14 @@ export function broomRecords() {
 	const recordsToDeleteTimestamp = subHours(new Date(), recordLifespan).getTime();
 	const logsToDeleteTimestamp = subHours(new Date(), logLifespan).getTime();
 
-	const recordsDeleted = deleteRecordsOlderThan(recordsToDeleteTimestamp);
-	const logsDeleted = deleteLogsOlderThan(logsToDeleteTimestamp);
+	const recordsDeleted = databaseClient.db
+		.delete(recordSchema)
+		.where(lt(recordSchema.timestamp, recordsToDeleteTimestamp))
+		.run().changes;
+	const logsDeleted = databaseClient.db
+		.delete(logSchema)
+		.where(lt(logSchema.timestamp, logsToDeleteTimestamp))
+		.run().changes;
 
 	if (recordsDeleted > 0) {
 		logger.log(`Deleted ${recordsDeleted} records`, LogType.Debug);
