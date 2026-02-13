@@ -1,26 +1,26 @@
 import { getHours, parse } from 'date-fns';
 import { dbConfigVariable } from '../classes/ConfigManager';
-import { LogType, log } from '../db/log';
-import { climateObserver, configManager, outlet } from '../instances';
+import { LogType } from '../classes/Logger';
+import { climateObserver, configManager, logger, outlet } from '../instances';
 
 async function setLight(state: boolean) {
 	await outlet.setState(outlet.slot.Light, state);
-	log(`Light: ${state ? 'on' : 'off'}`, LogType.Info, false);
+	logger.log(`Light: ${state ? 'on' : 'off'}`, LogType.Debug);
 }
 
 async function setVentilator(state: boolean) {
 	await outlet.setState(outlet.slot.Ventilator, state);
-	log(`Ventilator: ${state ? 'on' : 'off'}`, LogType.Info, false);
+	logger.log(`Ventilator: ${state ? 'on' : 'off'}`, LogType.Debug);
 }
 
 async function setHumidifier(state: boolean) {
 	await outlet.setState(outlet.slot.Humidifier, state);
-	log(`Humidifier: ${state ? 'on' : 'off'}`, LogType.Info, false);
+	logger.log(`Humidifier: ${state ? 'on' : 'off'}`, LogType.Debug);
 }
 
 async function setFan(state: boolean) {
 	await outlet.setState(outlet.slot.Fan, state);
-	log(`Fan: ${state ? 'on' : 'off'}`, LogType.Info, false);
+	logger.log(`Fan: ${state ? 'on' : 'off'}`, LogType.Debug);
 }
 
 async function runOffMode() {
@@ -97,7 +97,7 @@ async function runGrowMode() {
 		setHumidifier(false);
 		setVentilator(true);
 		setFan(true);
-		log('No climate data, using fallback settings', LogType.Warning);
+		logger.log('No climate data, using fallback settings', LogType.Warning);
 		return;
 	}
 
@@ -170,7 +170,7 @@ async function runDryMode() {
 	if (!temperature || !humidity) {
 		setHumidifier(false);
 		setVentilator(false);
-		log('No climate data, using fallback settings', LogType.Warning);
+		logger.log('No climate data, using fallback settings', LogType.Warning);
 		return;
 	}
 
@@ -239,6 +239,6 @@ export async function controlClimate() {
 		case 'APP_OFF':
 			break;
 		default:
-			log(`Unknown mode: ${mode}`, LogType.Error);
+			logger.log(`Unknown mode: ${mode}`, LogType.Error);
 	}
 }

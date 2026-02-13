@@ -6,9 +6,18 @@ import fastifyStatic from '@fastify/static';
 import { WebSocketServer } from 'ws';
 import { apiRoutes } from './api';
 import { envConfigVariable } from './classes/EnvManager';
-import { LogType, log } from './db/log';
+import { LogType } from './classes/Logger';
 import { setupDatabase } from './db/setup';
-import { configManager, databaseClient, envManager, fastify, outlet, socketManager, taskScheduler } from './instances';
+import {
+	configManager,
+	databaseClient,
+	envManager,
+	fastify,
+	logger,
+	outlet,
+	socketManager,
+	taskScheduler,
+} from './instances';
 import { broomRecords, collectRecords, controlClimate } from './tasks';
 import { refreshOutletState } from './tasks/refreshOutletState';
 import { terminate } from './terminate';
@@ -17,7 +26,7 @@ import { stringifyError } from './utils';
 export async function run() {
 	try {
 		console.clear();
-		log('Starting application...', LogType.Info, false);
+		logger.log('Starting application...');
 
 		// Config and Database
 		envManager.initialize();
@@ -43,7 +52,7 @@ export async function run() {
 			reply.type('text/html').sendFile('index.html');
 		});
 		fastify.setErrorHandler((error, _request, reply) => {
-			log(`Error: ${stringifyError(error)}`, LogType.Error, false);
+			logger.log(`Error: ${stringifyError(error)}`, LogType.Error);
 			reply.status(500).send({ error });
 		});
 		await fastify.ready();
@@ -66,7 +75,7 @@ export async function run() {
 		process.on('uncaughtException', (error) => terminate(`Uncaught Exception: ${stringifyError(error)}`, 1)); // Handle uncaught errors
 		process.on('unhandledRejection', (reason) => terminate(`Unhandled Rejection: ${stringifyError(reason)}`, 1)); // Handle unhandled promise rejections
 
-		log('Application started');
+		logger.log('Application started');
 	} catch (error) {
 		terminate(`Setup error - ${stringifyError(error)}`, 1);
 	}

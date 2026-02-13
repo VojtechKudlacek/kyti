@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { envConfigVariable } from '../classes/EnvManager';
-import { log } from '../db/log';
-import { configManager, envManager, socketManager } from '../instances';
+import { configManager, envManager, logger, socketManager } from '../instances';
 
 interface PostBody {
 	value: number | boolean;
@@ -24,7 +23,7 @@ export async function configRoutes(fastify: FastifyInstance) {
 		}
 		configManager.setValue(key, value);
 		socketManager.emitConfigChange(key, value);
-		log(`Config "${key}" changed to "${value}"`);
+		logger.log(`Config "${key}" changed to "${value}"`);
 		return reply.code(204).send();
 	});
 }

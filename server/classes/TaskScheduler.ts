@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { addSeconds, differenceInSeconds, startOfDay, startOfSecond } from 'date-fns';
-import { LogType, log } from '../db/log';
+import { logger } from '../instances';
 import { stringifyError } from '../utils';
+import { LogType } from './Logger';
 
 const allowedIntervalSeconds = [
 	1, // 1 second
@@ -67,10 +68,10 @@ export class TaskScheduler {
 				if (nowSeconds >= task.nextRunSeconds) {
 					task.nextRunSeconds += task.intervalSeconds;
 					try {
-						log(`Executing task "${task.name}"`, LogType.Info, false);
+						logger.log(`Executing task "${task.name}"`, LogType.Debug);
 						await task.fn(nowMilliseconds);
 					} catch (error) {
-						log(`Error executing task "${task.name}": ${stringifyError(error)}`, LogType.Error);
+						logger.log(`Error executing task "${task.name}": ${stringifyError(error)}`, LogType.Error);
 					}
 				}
 			}

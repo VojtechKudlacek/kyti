@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import WebSocket from 'ws';
-import { LogType, log } from '../db/log';
-import { configManager, envManager, socketManager } from '../instances';
+import { configManager, envManager, logger, socketManager } from '../instances';
 import { stringifyError } from '../utils';
 import { dbConfigVariable } from './ConfigManager';
 import { envConfigVariable } from './EnvManager';
+import { LogType } from './Logger';
 
 interface SocketSlots {
 	Light: number | null;
@@ -76,12 +76,12 @@ export class Outlet {
 
 		this.isConnecting = true;
 		const url = envManager.getValue(envConfigVariable.shellyOutletUrl);
-		log(`Connecting to Outlet at ${url}...`, LogType.Info);
+		logger.log(`Connecting to Outlet at ${url}...`);
 
 		this.webSocket = new WebSocket(url);
 
 		this.webSocket.on('open', () => {
-			log('Outlet WebSocket connected', LogType.Info);
+			logger.log('Outlet WebSocket connected');
 			this.isConnecting = false;
 			if (this.reconnectTimer) {
 				clearTimeout(this.reconnectTimer);
@@ -97,11 +97,11 @@ export class Outlet {
 		});
 
 		this.webSocket.on('error', (err) => {
-			log(`Outlet WebSocket error: ${stringifyError(err)}`, LogType.Error);
+			logger.log(`Outlet WebSocket error: ${stringifyError(err)}`, LogType.Error);
 		});
 
 		this.webSocket.on('close', () => {
-			log('Outlet WebSocket disconnected', LogType.Warning);
+			logger.log('Outlet WebSocket disconnected', LogType.Warning);
 			this.webSocket = null;
 			this.isConnecting = false;
 			this.requestContexts.clear();
@@ -138,7 +138,7 @@ export class Outlet {
 						// For SetStatus, the result is typically null or success confirmation.
 						// Real state update comes via NotifyStatus or we rely on optimistic update.
 					} else if (message.error) {
-						log(`RPC Error for ${context.type}: ${message.error.message}`, LogType.Error);
+						logger.log(`RPC Error for ${context.type}: ${message.error.message}`, LogType.Error);
 						// If SetStatus failed, revert optimistic update
 						if (context.type === 'SetStatus') {
 							const currentState = this.state.get(context.slot);
@@ -156,7 +156,7 @@ export class Outlet {
 				this.updateStateFromNotification(message.params);
 			}
 		} catch (error) {
-			log(`Error handling message: ${stringifyError(error)}`, LogType.Error);
+			logger.log(`Error handling message: ${stringifyError(error)}`, LogType.Error);
 		}
 	}
 
@@ -217,7 +217,7 @@ export class Outlet {
 								updates.totalEnergy = (p.aenergy as { total: number }).total;
 							}
 
-							log(`Outlet state updated for slot ${slot}: ${JSON.stringify(updates)}`, LogType.Info);
+							logger.log(`Outlet state updated for slot ${slot}: ${JSON.stringify(updates)}`);
 
 							this.state.set(slot, {
 								...currentState,
@@ -244,7 +244,7 @@ export class Outlet {
 
 	private sendCommand(method: string, params: Record<string, unknown>, context?: RequestContext): void {
 		if (!this.waitForConnection()) {
-			log(`Cannot send command ${method}: Socket not ready`, LogType.Warning);
+			logger.log(`Cannot send command ${method}: Socket not ready`, LogType.Warning);
 			return;
 		}
 
@@ -263,7 +263,7 @@ export class Outlet {
 		try {
 			this.webSocket?.send(JSON.stringify(request));
 		} catch (error) {
-			log(`Failed to send command ${method}: ${stringifyError(error)}`, LogType.Error);
+			logger.log(`Failed to send command ${method}: ${stringifyError(error)}`, LogType.Error);
 			this.requestContexts.delete(id);
 		}
 	}
